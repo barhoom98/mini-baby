@@ -1,0 +1,121 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="theme-color" content="#fffaf7">
+    <meta name="description" content="MINI BABY - ملابس وإكسسوارات مختارة للصغار">
+    <title>MINI BABY | عالم صغير من اللطافة</title>
+    <link rel="icon" href="assets/logo.svg" type="image/svg+xml">
+    <link rel="stylesheet" href="styles.css">
+    <script src="store.js" defer></script>
+    <script src="app.js" defer></script>
+  </head>
+  <body>
+    <div class="announcement">تفاصيل صغيرة، فرحة كبيرة <span aria-hidden="true">♡</span></div>
+    <header class="site-header">
+      <a class="brand" href="#" aria-label="MINI BABY - الصفحة الرئيسية">
+        <img src="assets/logo.svg" alt="" width="48" height="48">
+        <span>MINI <b>BABY</b><small>لأنهم يستحقون الأجمل</small></span>
+      </a>
+      <nav class="main-nav" aria-label="التنقل الرئيسي">
+        <a href="#products">تسوّقي الآن</a>
+        <a href="#about">عن MINI BABY</a>
+      </nav>
+      <button class="cart-button" id="open-cart" type="button" aria-label="فتح سلة المشتريات">
+        <span aria-hidden="true">♡</span> سلتي <b id="cart-count">0</b>
+      </button>
+    </header>
+
+    <main>
+      <section class="hero" id="about">
+        <div class="hero-copy">
+          <p class="eyebrow">اختيارات بحبّ للصغار</p>
+          <h1>كل قطعة تحكي<br><span>حكاية لطيفة</span></h1>
+          <p class="hero-description">ملابس وإكسسوارات مريحة لأجمل لحظات طفلكم، اختيرت بعناية وحب.</p>
+          <a class="primary-button" href="#products">اكتشفي المجموعة <span aria-hidden="true">←</span></a>
+          <div class="hero-note"><span aria-hidden="true">✳</span> راحة الصغار أولويتنا</div>
+        </div>
+        <div class="hero-art" aria-hidden="true">
+          <div class="hero-sun"></div>
+          <div class="hero-blob"></div>
+          <div class="hero-sticker">made<br>with love <span>♡</span></div>
+          <div class="hero-caption">MINI moments,<br>big memories</div>
+        </div>
+      </section>
+
+      <section class="shop-section" id="products">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">مجموعتنا</p>
+            <h2>قطع صغيرة، حب كبير</h2>
+          </div>
+          <label class="search-box">
+            <span class="sr-only">ابحثي عن منتج</span>
+            <span aria-hidden="true">⌕</span>
+            <input id="product-search" type="search" placeholder="ابحثي عن قطعة...">
+          </label>
+        </div>
+        <div class="category-list" id="category-list" aria-label="تصنيف المنتجات"></div>
+        <div class="shop-layout">
+          <section class="product-area" aria-label="المنتجات">
+            <div class="product-grid" id="product-grid"></div>
+            <p class="empty-state" id="empty-state" hidden>ما لقينا قطع تطابق بحثك.</p>
+          </section>
+          <aside class="doll-panel" aria-labelledby="doll-title">
+            <div class="doll-heading">
+              <div>
+                <p class="eyebrow">جرّبي التنسيق</p>
+                <h2 id="doll-title">إطلالة على الدمية</h2>
+              </div>
+              <span class="sparkle" aria-hidden="true">✳</span>
+            </div>
+            <p class="doll-hint" id="doll-hint">اختاري قطعة من المجموعة لتشاهديها على الدمية.</p>
+            <div class="doll-stage" id="doll-stage" role="img" aria-label="دمية ترتدي القطعة المختارة">
+              <svg class="doll-svg" viewBox="0 0 260 390" aria-hidden="true">
+                <ellipse cx="130" cy="365" rx="78" ry="12" fill="#e8d9d0"/>
+                <path d="M92 278 L88 348 Q88 360 99 360 L113 360 L124 286 M168 278 L173 348 Q173 360 162 360 L148 360 L137 286" fill="#efcbb6"/>
+                <path d="M92 112 Q74 122 68 159 L57 234 Q55 245 65 249 Q74 252 78 241 L99 181 L101 133 M168 112 Q186 122 192 159 L203 234 Q205 245 195 249 Q186 252 182 241 L161 181 L159 133" fill="#f3d5c4"/>
+                <ellipse cx="130" cy="73" rx="44" ry="49" fill="#f3d5c4"/>
+                <path d="M88 71 Q84 22 131 22 Q177 23 174 74 Q166 44 147 43 Q124 63 89 56" fill="#76564a"/>
+                <path d="M95 72 Q101 68 107 72 M151 72 Q157 68 163 72" fill="none" stroke="#634b43" stroke-width="3" stroke-linecap="round"/>
+                <path d="M122 91 Q130 97 138 91" fill="none" stroke="#bd8077" stroke-width="3" stroke-linecap="round"/>
+                <path d="M101 116 Q130 105 159 116 L172 195 Q177 224 165 282 L95 282 Q83 224 88 195Z" fill="#f3d5c4"/>
+                <g id="doll-outfit"></g>
+                <path d="M94 282 Q130 291 166 282" fill="none" stroke="#e6bba5" stroke-width="2"/>
+              </svg>
+              <span class="doll-badge">mini style <span aria-hidden="true">♡</span></span>
+            </div>
+            <div class="try-on-label"><span aria-hidden="true">✦</span> تنسيقكِ الصغير يبدأ من هنا</div>
+          </aside>
+        </div>
+      </section>
+      <section class="service-strip" aria-label="مميزات MINI BABY">
+        <div><span aria-hidden="true">♡</span><p><b>مختارة بحب</b><small>قطع مريحة للصغار</small></p></div>
+        <div><span aria-hidden="true">✳</span><p><b>تفاصيل تهمّك</b><small>مقاسات ومواصفات واضحة</small></p></div>
+        <div><span aria-hidden="true">☏</span><p><b>على تواصل دائم</b><small>اطلبي بسهولة عبر واتساب</small></p></div>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <a class="footer-brand" href="#"><img src="assets/logo.svg" alt="" width="38" height="38"> MINI BABY</a>
+      <p>لحظات طفولة مليانة حبّ ♡</p>
+      <a id="contact-link" href="#products">تواصلي معنا</a>
+    </footer>
+
+    <div class="overlay" id="cart-overlay" hidden></div>
+    <aside class="cart-drawer" id="cart-drawer" aria-labelledby="cart-title" aria-hidden="true">
+      <div class="cart-header">
+        <div><p class="eyebrow">اختياراتك الحلوة</p><h2 id="cart-title">سلة المشتريات</h2></div>
+        <button class="icon-button" id="close-cart" type="button" aria-label="إغلاق السلة">×</button>
+      </div>
+      <div class="cart-items" id="cart-items"></div>
+      <div class="cart-footer">
+        <div class="cart-total"><span>المجموع</span><b id="cart-total">0</b></div>
+        <button class="primary-button checkout-button" id="checkout-button" type="button">إتمام الطلب عبر واتساب <span aria-hidden="true">←</span></button>
+        <p class="checkout-note" id="checkout-note"></p>
+      </div>
+    </aside>
+    <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  </body>
+</html>
