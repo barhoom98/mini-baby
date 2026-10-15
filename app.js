@@ -86,6 +86,9 @@
     if (accessory) {
       return `<path d="M92 55 Q130 14 168 55" fill="none" stroke="${color}" stroke-width="13" stroke-linecap="round"/><circle cx="130" cy="35" r="13" fill="${color}"/><path d="M130 25 C116 15 115 34 130 36 C145 34 144 15 130 25" fill="#f8e6cf"/>`;
     }
+    if (product.outfit === "bib") {
+      return `<path d="M109 119 Q130 130 151 119 L153 145 L166 175 Q130 194 94 175 L107 145Z" fill="${color}"/><circle cx="130" cy="163" r="8" fill="#fff9f4" fill-opacity=".8"/><path d="M108 128 Q130 143 152 128" fill="none" stroke="#fff9f4" stroke-opacity=".75" stroke-width="3"/>`;
+    }
     if (product.outfit === "dress") {
       return `<path d="M101 117 Q130 106 159 117 L171 185 Q175 206 194 278 Q130 293 66 278 Q85 206 89 185Z" fill="${color}"/><path d="M101 117 Q130 135 159 117 L163 183 Q130 196 97 183Z" fill="${color}" stroke="#fff9f4" stroke-opacity=".65" stroke-width="3"/><path d="M91 201 Q130 215 169 201" fill="none" stroke="#fff9f4" stroke-opacity=".7" stroke-width="3"/>`;
     }

@@ -4,6 +4,7 @@ window.MINI_BABY = {
   categories: [
     { id: "all", label: "كل القطع" },
     { id: "clothes", label: "ملابس" },
+    { id: "essentials", label: "مستلزمات بيبي" },
     { id: "accessories", label: "إكسسوارات" }
   ],
   products: [
@@ -49,6 +50,17 @@ window.MINI_BABY = {
       price: 25,
       color: "#e3a5a6",
       outfit: "accessory",
+      image: ""
+    },
+    {
+      id: "demo-bib",
+      name: "مريلة قطنية ناعمة",
+      category: "essentials",
+      description: "مريلة عملية من القطن الناعم، سهلة الاستخدام والتنظيف.",
+      sizes: ["مقاس موحد"],
+      price: 29,
+      color: "#dfc38f",
+      outfit: "bib",
       image: ""
     }
   ]
