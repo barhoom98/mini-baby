@@ -17,7 +17,8 @@ window.MINI_BABY = {
       price: 7,
       color: "#b9bcbc",
       outfit: "set",
-      image: "assets/products/winter-wool-set-grey.png"
+      image: "assets/products/winter-wool-set-grey.png",
+      gallery: ["assets/products/winter-wool-set-grey-detail.jpg"]
     }
   ]
 };

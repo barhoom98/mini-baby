@@ -12,6 +12,7 @@
   let activeCategory = "all";
   let searchTerm = "";
   let selectedProductId = products[0]?.id ?? "";
+  const activePhotos = new Map();
   let cart = loadCart();
   let toastTimer;
 
@@ -51,9 +52,31 @@
     });
   }
 
+  function productPhotos(product) {
+    return [product.image, ...(product.gallery || [])].filter(Boolean);
+  }
+
+  // Transparent cut-outs (.png) sit inside the frame; regular photos fill it
+  function photoClass(src) {
+    return /\.png$/i.test(src) ? "" : "is-photo";
+  }
+
   function productImage(product) {
-    if (!product.image) return `<span class="placeholder-icon" aria-hidden="true">♡</span>`;
-    return `<img src="${safeText(product.image)}" alt="${safeText(product.name)}" loading="lazy">`;
+    const photos = productPhotos(product);
+    if (!photos.length) return `<span class="placeholder-icon" aria-hidden="true">♡</span>`;
+    const src = photos[activePhotos.get(product.id) ?? 0] ?? photos[0];
+    return `<img class="${photoClass(src)}" src="${safeText(src)}" alt="${safeText(product.name)}" loading="lazy">`;
+  }
+
+  function productThumbs(product) {
+    const photos = productPhotos(product);
+    if (photos.length < 2) return "";
+    const active = activePhotos.get(product.id) ?? 0;
+    return `<div class="product-thumbs">${photos.map((src, index) => `
+      <button type="button" class="${index === active ? "active" : ""}" data-photo="${safeText(product.id)}" data-index="${index}"
+        aria-label="صورة ${index + 1} من ${photos.length} لـ ${safeText(product.name)}" aria-pressed="${index === active}">
+        <img class="${photoClass(src)}" src="${safeText(src)}" alt="" loading="lazy">
+      </button>`).join("")}</div>`;
   }
 
   function renderProducts() {
@@ -66,6 +89,7 @@
           ${productImage(product)}
           <span class="try-label">جرّبي على الدمية ✦</span>
         </button>
+        ${productThumbs(product)}
         <div class="product-info">
           <div class="product-title-row"><h3>${safeText(product.name)}</h3><b>${money(product.price)}</b></div>
           <p class="product-description">${safeText(product.description)}</p>
@@ -185,6 +209,12 @@
   productGrid.addEventListener("click", (event) => {
     const tryButton = event.target.closest("[data-try]");
     const addButton = event.target.closest("[data-add]");
+    const photoButton = event.target.closest("[data-photo]");
+    if (photoButton) {
+      activePhotos.set(photoButton.dataset.photo, Number(photoButton.dataset.index));
+      renderProducts();
+      return;
+    }
     if (tryButton) selectProduct(tryButton.dataset.try);
     if (addButton) {
       const sizeSelect = productGrid.querySelector(`[data-size="${CSS.escape(addButton.dataset.add)}"]`);
