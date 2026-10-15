@@ -1,6 +1,6 @@
 window.MINI_BABY = {
-  currency: "₪",
-  whatsappNumber: "",
+  currency: "د.أ",
+  whatsappNumber: "962788477005",
   categories: [
     { id: "all", label: "كل القطع" },
     { id: "clothes", label: "ملابس" },
@@ -9,59 +9,15 @@ window.MINI_BABY = {
   ],
   products: [
     {
-      id: "demo-romper",
-      name: "أفرول القطن الناعم",
+      id: "winter-wool-set-grey",
+      name: "طقم بيبي شتوي صوف",
       category: "clothes",
-      description: "قطن ناعم ومريح لبشرة طفلك، مناسب للاستخدام اليومي.",
-      sizes: ["0-3 أشهر", "3-6 أشهر", "6-9 أشهر"],
-      price: 49,
-      color: "#e8b9a8",
-      outfit: "romper",
-      image: ""
-    },
-    {
-      id: "demo-dress",
-      name: "فستان يوم مميز",
-      category: "clothes",
-      description: "قصة لطيفة بلمسة ناعمة للمناسبات والطلعات.",
-      sizes: ["3-6 أشهر", "6-12 شهر", "12-18 شهر"],
-      price: 69,
-      color: "#c9a6b8",
-      outfit: "dress",
-      image: ""
-    },
-    {
-      id: "demo-set",
-      name: "طقم صغير مريح",
-      category: "clothes",
-      description: "طقم خفيف سهل اللبس، يجمع الراحة والأناقة.",
-      sizes: ["0-3 أشهر", "3-6 أشهر", "6-9 أشهر"],
-      price: 79,
-      color: "#a6b8a2",
+      description: "طقم شتوي من الصوف باللون السكني: بلوزة بأزرار مع بنطلون.",
+      sizes: ["اسألي عن المقاسات المتوفرة"],
+      price: 7,
+      color: "#b9bcbc",
       outfit: "set",
-      image: ""
-    },
-    {
-      id: "demo-headband",
-      name: "طوق وردة صغير",
-      category: "accessories",
-      description: "إكسسوار ناعم وخفيف يكمل إطلالة صغيرتك.",
-      sizes: ["مقاس موحد"],
-      price: 25,
-      color: "#e3a5a6",
-      outfit: "accessory",
-      image: ""
-    },
-    {
-      id: "demo-bib",
-      name: "مريلة قطنية ناعمة",
-      category: "essentials",
-      description: "مريلة عملية من القطن الناعم، سهلة الاستخدام والتنظيف.",
-      sizes: ["مقاس موحد"],
-      price: 29,
-      color: "#dfc38f",
-      outfit: "bib",
-      image: ""
+      image: "assets/products/winter-wool-set-grey.png"
     }
   ]
 };
