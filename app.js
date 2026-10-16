@@ -13,13 +13,31 @@
   let searchTerm = "";
   let selectedProductId = products[0]?.id ?? "";
   const activePhotos = new Map();
+  const selectedColors = new Map();
+  products.forEach((product) => {
+    if (!product.colors?.length) return;
+    selectedColors.set(
+      product.id,
+      product.colors.find((color) => color.name === product.colorName) || product.colors[0]
+    );
+  });
   let cart = loadCart();
   let toastTimer;
 
   function loadCart() {
     try {
       const saved = JSON.parse(localStorage.getItem(cartKey) || "[]");
-      return Array.isArray(saved) ? saved : [];
+      if (!Array.isArray(saved)) return [];
+      return saved.filter((item) => item && typeof item === "object").map((item) => {
+        const product = products.find((entry) => entry.id === item.productId);
+        if (!product) return item;
+        const color = product.colors?.find((entry) => entry.name === item.colorName);
+        return {
+          ...item,
+          colorName: color?.name || item.colorName || product.colorName || "اللون الأساسي",
+          colorHex: color?.hex || item.colorHex || product.color
+        };
+      });
     } catch (error) {
       console.error("Could not read the saved cart.", error);
       return [];
@@ -34,6 +52,13 @@
     return String(value).replace(/[&<>"']/g, (character) => ({
       "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;"
     })[character]);
+  }
+
+  function selectedColor(product) {
+    return selectedColors.get(product.id) || {
+      name: product.colorName || "اللون الأساسي",
+      hex: product.color
+    };
   }
 
   function renderCategories() {
@@ -79,10 +104,26 @@
       </button>`).join("")}</div>`;
   }
 
+  function productColors(product) {
+    if (!product.colors?.length) return "";
+    const active = selectedColor(product);
+    return `<fieldset class="color-picker">
+      <legend>اللون: ${safeText(active.name)}</legend>
+      <div class="color-swatches">${product.colors.map((color, index) => `
+        <button type="button" class="color-swatch ${color.name === active.name ? "active" : ""}"
+          style="--swatch-color:${safeText(color.hex)}" data-color-product="${safeText(product.id)}" data-color-index="${index}"
+          title="${safeText(color.name)}" aria-label="اختيار اللون ${safeText(color.name)}"
+          aria-pressed="${color.name === active.name}"></button>`).join("")}</div>
+    </fieldset>
+    <p class="color-note">صورة المنتج للون السكني؛ اللون المختار يظهر على الدمية.</p>`;
+  }
+
   function renderProducts() {
     const visibleProducts = filteredProducts();
-    productGrid.innerHTML = visibleProducts.map((product, index) => `
-      <article class="product-card ${selectedProductId === product.id ? "selected" : ""}" style="--product-color:${safeText(product.color)}">
+    productGrid.innerHTML = visibleProducts.map((product, index) => {
+      const color = selectedColor(product);
+      return `
+      <article class="product-card ${selectedProductId === product.id ? "selected" : ""}" style="--product-color:${safeText(color.hex)}">
         <button class="product-image ${product.image ? "" : "is-placeholder"}" type="button"
           data-try="${safeText(product.id)}" aria-label="جرّبي ${safeText(product.name)} على الدمية">
           <span class="product-number">0${index + 1}</span>
@@ -95,12 +136,15 @@
           <p class="product-description">${safeText(product.description)}</p>
           <label class="size-label">المقاس
             <select data-size="${safeText(product.id)}" aria-label="مقاس ${safeText(product.name)}">
-              ${product.sizes.map((size) => `<option value="${safeText(size)}">${safeText(size)}</option>`).join("")}
+              ${product.sizes.map((size) => `<option value="${safeText(size)}">المقاس ${safeText(size)}</option>`).join("")}
             </select>
           </label>
+          ${product.sizeNote ? `<p class="size-note">${safeText(product.sizeNote)}</p>` : ""}
+          ${productColors(product)}
           <button class="add-button" type="button" data-add="${safeText(product.id)}">أضيفي إلى السلة <span aria-hidden="true">＋</span></button>
         </div>
-      </article>`).join("");
+      </article>`;
+    }).join("");
     emptyState.hidden = visibleProducts.length !== 0;
   }
 
@@ -126,10 +170,12 @@
     const product = products.find((item) => item.id === productId);
     if (!product) return;
     selectedProductId = productId;
-    dollOutfit.innerHTML = outfitMarkup(product);
-    document.querySelector("#doll-hint").textContent = `الآن على الدمية: ${product.name}`;
+    const color = selectedColor(product);
+    const styledProduct = { ...product, color: color.hex, colorName: color.name };
+    dollOutfit.innerHTML = outfitMarkup(styledProduct);
+    document.querySelector("#doll-hint").textContent = `الآن على الدمية: ${product.name} · ${color.name}`;
     document.querySelector("#doll-stage").setAttribute("aria-label", `دمية ترتدي ${product.name}`);
-    window.dispatchEvent(new CustomEvent("mini-baby:try-on", { detail: product }));
+    window.dispatchEvent(new CustomEvent("mini-baby:try-on", { detail: styledProduct }));
     renderProducts();
   }
 
@@ -145,9 +191,10 @@
   function addToCart(productId, size) {
     const product = products.find((item) => item.id === productId);
     if (!product) return;
-    const existing = cart.find((item) => item.productId === productId && item.size === size);
+    const color = selectedColor(product);
+    const existing = cart.find((item) => item.productId === productId && item.size === size && item.colorName === color.name);
     if (existing) existing.quantity += 1;
-    else cart.push({ productId, size, quantity: 1 });
+    else cart.push({ productId, size, colorName: color.name, colorHex: color.hex, quantity: 1 });
     persistCart();
     renderCart();
     showToast("أضيفت القطعة إلى سلّتك ♡");
@@ -169,16 +216,18 @@
       : "أضيفي رقم واتساب المحل في ملف store.js لتفعيل الطلب.";
     cartItems.innerHTML = cart.length ? cart.map((item) => {
       const product = products.find((entry) => entry.id === item.productId);
+      const colorName = item.colorName || product.colorName || "اللون الأساسي";
+      const colorHex = item.colorHex || product.color;
       return `<article class="cart-item">
-        <span class="cart-item-icon" style="--product-color:${safeText(product.color)}" aria-hidden="true">♡</span>
-        <div class="cart-item-info"><b>${safeText(product.name)}</b><small>${safeText(item.size)} · ${money(product.price)}</small>
+        <span class="cart-item-icon" style="--product-color:${safeText(colorHex)}" aria-hidden="true">♡</span>
+        <div class="cart-item-info"><b>${safeText(product.name)}</b><small>المقاس ${safeText(item.size)} · ${safeText(colorName)} · ${money(product.price)}</small>
           <div class="quantity-controls">
-            <button type="button" data-quantity="${safeText(product.id)}" data-size="${safeText(item.size)}" data-change="1" aria-label="زيادة الكمية">+</button>
+            <button type="button" data-quantity="${safeText(product.id)}" data-size="${safeText(item.size)}" data-color-name="${safeText(colorName)}" data-change="1" aria-label="زيادة الكمية">+</button>
             <span>${item.quantity}</span>
-            <button type="button" data-quantity="${safeText(product.id)}" data-size="${safeText(item.size)}" data-change="-1" aria-label="تقليل الكمية">−</button>
+            <button type="button" data-quantity="${safeText(product.id)}" data-size="${safeText(item.size)}" data-color-name="${safeText(colorName)}" data-change="-1" aria-label="تقليل الكمية">−</button>
           </div>
         </div>
-        <button class="remove-item" type="button" data-remove="${safeText(product.id)}" data-size="${safeText(item.size)}" aria-label="حذف ${safeText(product.name)}">×</button>
+        <button class="remove-item" type="button" data-remove="${safeText(product.id)}" data-size="${safeText(item.size)}" data-color-name="${safeText(colorName)}" aria-label="حذف ${safeText(product.name)}">×</button>
       </article>`;
     }).join("") : `<div class="cart-empty"><span aria-hidden="true">♡</span><p>سلّتك لسه فاضية</p><small>اختاري قطعك المفضلة وبتلاقيها هون.</small></div>`;
   }
@@ -211,6 +260,15 @@
     const tryButton = event.target.closest("[data-try]");
     const addButton = event.target.closest("[data-add]");
     const photoButton = event.target.closest("[data-photo]");
+    const colorButton = event.target.closest("[data-color-product]");
+    if (colorButton) {
+      const product = products.find((item) => item.id === colorButton.dataset.colorProduct);
+      const color = product?.colors?.[Number(colorButton.dataset.colorIndex)];
+      if (!product || !color) return;
+      selectedColors.set(product.id, color);
+      selectProduct(product.id);
+      return;
+    }
     if (photoButton) {
       activePhotos.set(photoButton.dataset.photo, Number(photoButton.dataset.index));
       renderProducts();
@@ -232,9 +290,9 @@
     const removeButton = event.target.closest("[data-remove]");
     const quantityButton = event.target.closest("[data-quantity]");
     if (removeButton) {
-      cart = cart.filter((item) => !(item.productId === removeButton.dataset.remove && item.size === removeButton.dataset.size));
+      cart = cart.filter((item) => !(item.productId === removeButton.dataset.remove && item.size === removeButton.dataset.size && (item.colorName || "") === (removeButton.dataset.colorName || "")));
     } else if (quantityButton) {
-      const item = cart.find((entry) => entry.productId === quantityButton.dataset.quantity && entry.size === quantityButton.dataset.size);
+      const item = cart.find((entry) => entry.productId === quantityButton.dataset.quantity && entry.size === quantityButton.dataset.size && (entry.colorName || "") === (quantityButton.dataset.colorName || ""));
       if (item) {
         item.quantity += Number(quantityButton.dataset.change);
         if (item.quantity < 1) cart = cart.filter((entry) => entry !== item);
@@ -255,7 +313,7 @@
     if (!whatsappNumber || cart.length === 0) return;
     const lines = cart.map((item) => {
       const product = products.find((entry) => entry.id === item.productId);
-      return `• ${product.name} — ${item.size} × ${item.quantity} — ${money(product.price * item.quantity)}`;
+      return `• ${product.name} — المقاس ${item.size} — ${item.colorName || product.colorName || "اللون الأساسي"} × ${item.quantity} — ${money(product.price * item.quantity)}`;
     });
     const total = cart.reduce((sum, item) => sum + products.find((entry) => entry.id === item.productId).price * item.quantity, 0);
     const message = `مرحباً MINI BABY، أرغب بطلب:\n${lines.join("\n")}\n\nالمجموع: ${money(total)}`;

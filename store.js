@@ -12,10 +12,18 @@ window.MINI_BABY = {
       id: "winter-wool-set-grey",
       name: "طقم بيبي شتوي صوف",
       category: "clothes",
-      description: "طقم شتوي من الصوف باللون السكني: بلوزة بأزرار مع بنطلون.",
-      sizes: ["اسألي عن المقاسات المتوفرة"],
+      description: "طقم شتوي من الصوف: بلوزة بأزرار مع بنطلون.",
+      sizes: ["1", "2", "3", "4"],
+      sizeNote: "المقاس 4 مناسب لعمر سنة.",
       price: 7,
       color: "#dedbd2",
+      colorName: "سكني",
+      colors: [
+        { name: "أحمر", hex: "#c9434b" },
+        { name: "سكني", hex: "#b9bcbc" },
+        { name: "أسود", hex: "#353438" },
+        { name: "بيج", hex: "#d5bd98" }
+      ],
       outfit: "winter-knit-set",
       image: "assets/products/winter-wool-set-grey.png",
       gallery: ["assets/products/winter-wool-set-grey-detail.jpg"]
