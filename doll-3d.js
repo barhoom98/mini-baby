@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
 
 const stage = document.querySelector("#doll-stage");
 const canvas = document.querySelector("#doll-canvas");
@@ -13,8 +14,8 @@ if (stage && canvas) {
 
     const scene = new THREE.Scene();
     const camera = new THREE.PerspectiveCamera(32, 1, 0.01, 10);
-    camera.position.set(0.48, 0.49, 1.78);
-    camera.lookAt(0, 0.38, 0);
+    camera.position.set(0, 0.37, 1.34);
+    camera.lookAt(0, 0.36, 0);
 
     scene.add(new THREE.HemisphereLight(0xfff8f0, 0xb88e7a, 2.1));
     const keyLight = new THREE.DirectionalLight(0xffffff, 2.7);
@@ -26,6 +27,9 @@ if (stage && canvas) {
 
     const doll = new THREE.Group();
     scene.add(doll);
+    const photoMannequin = new THREE.Group();
+    photoMannequin.visible = false;
+    scene.add(photoMannequin);
     const clothes = new THREE.Group();
     doll.add(clothes);
     const knitTexturePath = "assets/products/winter-wool-knit-texture.jpg";
@@ -465,17 +469,45 @@ if (stage && canvas) {
     floor.position.y = 0.001;
     scene.add(floor);
 
+    new GLTFLoader().load(
+      "assets/objects/mini-baby-mannequin.glb",
+      (gltf) => {
+        const model = gltf.scene;
+        const bounds = new THREE.Box3().setFromObject(model);
+        const size = bounds.getSize(new THREE.Vector3());
+        const center = bounds.getCenter(new THREE.Vector3());
+        const scale = 0.72 / size.y;
+        model.scale.setScalar(scale);
+        model.position.set(-center.x * scale, -bounds.min.y * scale, 0);
+        photoMannequin.add(model);
+        photoMannequin.visible = true;
+        doll.visible = false;
+        floor.visible = false;
+        window.MINI_BABY_PHOTO_MODEL = true;
+        stage.classList.add("webgl-ready", "photo-mannequin");
+        stage.setAttribute("aria-label", "صورة المانيكان الأصلي بلباس الطقم، معروضة أماميًا داخل نموذج GLB");
+        document.querySelector(".doll-panel").classList.add("photo-mannequin");
+        document.querySelector("#doll-title").textContent = "المانيكان الأصلي";
+        document.querySelector(".doll-heading .eyebrow").textContent = "الصورة المرجعية";
+        document.querySelector("#doll-hint").textContent = "الصورة الأصلية للطقم داخل GLB · عرض أمامي فقط";
+        document.querySelector(".try-on-label").textContent = "المانيكان مطابق للصورة المرفقة · ملف GLB بواجهة أمامية وليس مجسمًا قابلًا للدوران";
+      },
+      undefined,
+      (error) => console.error("Could not load the GLB mannequin; showing the 3D fallback.", error)
+    );
+
     let rotationY = -0.22;
     let dragging = false;
     let previousX = 0;
 
     canvas.addEventListener("pointerdown", (event) => {
+      if (photoMannequin.visible) return;
       dragging = true;
       previousX = event.clientX;
       canvas.setPointerCapture(event.pointerId);
     });
     canvas.addEventListener("pointermove", (event) => {
-      if (!dragging) return;
+      if (!dragging || photoMannequin.visible) return;
       rotationY += (event.clientX - previousX) * 0.012;
       previousX = event.clientX;
     });
@@ -483,6 +515,7 @@ if (stage && canvas) {
     canvas.addEventListener("pointercancel", () => { dragging = false; });
     stage.querySelectorAll("[data-rotate]").forEach((button) => {
       button.addEventListener("click", () => {
+        if (photoMannequin.visible) return;
         rotationY += Number(button.dataset.rotate);
       });
     });
@@ -499,6 +532,7 @@ if (stage && canvas) {
 
     function animate() {
       doll.rotation.y = rotationY;
+      photoMannequin.rotation.y = 0;
       renderer.render(scene, camera);
       requestAnimationFrame(animate);
     }
@@ -506,7 +540,6 @@ if (stage && canvas) {
     const initialProduct = window.MINI_BABY?.products?.[0];
     if (initialProduct) dressProduct(initialProduct);
     window.addEventListener("mini-baby:try-on", (event) => dressProduct(event.detail));
-    stage.classList.add("webgl-ready");
     animate();
   } catch (error) {
     console.error("The 3D mannequin could not be initialized; showing the illustrated fallback.", error);

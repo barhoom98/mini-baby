@@ -132,6 +132,8 @@ h1 span { color: var(--rose); }
 .doll-badge { position: absolute; right: 9px; bottom: 10px; padding: 6px 9px; border-radius: 20px; background: #fff; color: var(--muted); font: 600 9px var(--serif); }
 .doll-badge span { color: var(--rose); }
 .doll-controls { display: flex; justify-content: center; gap: 7px; padding-top: 9px; }
+.doll-panel.photo-mannequin .doll-controls { display: none; }
+.doll-panel.photo-mannequin .doll-measurements { display: none; }
 .doll-controls button { width: 29px; height: 27px; border: 1px solid #ead8cf; border-radius: 4px; background: #fffaf7; color: var(--rose-dark); cursor: pointer; font-size: 17px; line-height: 1; }
 .doll-controls button:hover { border-color: var(--rose); background: #f8eee8; }
 .try-on-label { padding-top: 13px; color: var(--muted); text-align: center; font-size: 10px; }
