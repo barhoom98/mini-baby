@@ -78,6 +78,9 @@
   }
 
   function productPhotos(product) {
+    const color = selectedColor(product);
+    if (color.photos) return color.photos.filter(Boolean);
+    if (color.name !== product.colorName) return [];
     return [product.image, ...(product.gallery || [])].filter(Boolean);
   }
 
@@ -115,7 +118,9 @@
           title="${safeText(color.name)}" aria-label="اختيار اللون ${safeText(color.name)}"
           aria-pressed="${color.name === active.name}"></button>`).join("")}</div>
     </fieldset>
-    <p class="color-note">صورة المنتج للون السكني؛ اللون المختار يظهر على الدمية.</p>`;
+    <p class="color-note">${active.photos?.length
+      ? `صور المنتج الفعلية للون ${safeText(active.name)}.`
+      : "لا توجد صورة فعلية للون البيج ضمن الصور المرسلة؛ تظهر معاينته على الدمية فقط."}</p>`;
   }
 
   function renderProducts() {

@@ -19,9 +19,17 @@ window.MINI_BABY = {
       color: "#dedbd2",
       colorName: "سكني",
       colors: [
-        { name: "أحمر", hex: "#c9434b" },
-        { name: "سكني", hex: "#b9bcbc" },
-        { name: "أسود", hex: "#353438" },
+        { name: "أحمر", hex: "#671a2e", photos: ["assets/products/winter-wool-set-red.jpg"] },
+        {
+          name: "سكني",
+          hex: "#b9bcbc",
+          photos: [
+            "assets/products/winter-wool-set-grey.png",
+            "assets/products/winter-wool-set-grey-detail.jpg",
+            "assets/products/winter-wool-set-grey-photo.jpg"
+          ]
+        },
+        { name: "أسود", hex: "#353438", photos: ["assets/products/winter-wool-set-black.jpg"] },
         { name: "بيج", hex: "#d5bd98" }
       ],
       outfit: "winter-knit-set",
