@@ -1,5 +1,5 @@
 (() => {
-  const { currency, whatsappNumber, categories, products } = window.MINI_BABY;
+  const { currency, whatsappNumber, categories, products, business } = window.MINI_BABY;
   const cartKey = "mini-baby-cart-v1";
   const productGrid = document.querySelector("#product-grid");
   const categoryList = document.querySelector("#category-list");
@@ -8,7 +8,6 @@
   const cartDrawer = document.querySelector("#cart-drawer");
   const cartOverlay = document.querySelector("#cart-overlay");
   const cartItems = document.querySelector("#cart-items");
-  const dollOutfit = document.querySelector("#doll-outfit");
   let activeCategory = "all";
   let searchTerm = "";
   let selectedProductId = products[0]?.id ?? "";
@@ -69,6 +68,41 @@
       </button>`).join("");
   }
 
+  function renderBusinessInfo() {
+    const target = document.querySelector("#store-information");
+    if (!target || !business) return;
+    target.innerHTML = `
+      <div class="store-details-heading">
+        <p class="eyebrow">أهلًا بكم</p>
+        <h2 id="store-title">${safeText(business.name)}</h2>
+        <p>${safeText(business.description)}</p>
+      </div>
+      <div class="store-details-grid">
+        <section class="store-card" aria-labelledby="contact-title">
+          <h3 id="contact-title">زورونا وتواصلوا معنا</h3>
+          <p><b>الموقع:</b> ${safeText(business.address)}</p>
+          <p><b>الهاتف:</b> <a href="tel:${safeText(business.phone.replace(/[^\d+]/g, ""))}">${safeText(business.phone)}</a></p>
+          <div class="store-social-links">
+            <a href="${safeText(business.instagram)}" target="_blank" rel="noopener noreferrer">إنستغرام @mini_baby_jo</a>
+            <a href="${safeText(business.facebook)}" target="_blank" rel="noopener noreferrer">صفحتنا على فيسبوك</a>
+          </div>
+          <h3 class="hours-title">ساعات العمل</h3>
+          <table class="hours-table">
+            <tbody>${business.hours.map(({ day, time }) => `
+              <tr><th scope="row">${safeText(day)}</th><td>${safeText(time)}</td></tr>`).join("")}
+            </tbody>
+          </table>
+        </section>
+        <section class="store-card reviews-card" aria-labelledby="reviews-title">
+          <h3 id="reviews-title">آراء العملاء</h3>
+          <p class="store-rating"><span aria-label="خمس نجوم">★★★★★</span> <b>${safeText(business.rating)}</b></p>
+          <div class="review-list">${business.reviews.map((review) => `
+            <blockquote>«${safeText(review)}»</blockquote>`).join("")}
+          </div>
+        </section>
+      </div>`;
+  }
+
   function filteredProducts() {
     return products.filter((product) => {
       const matchesCategory = activeCategory === "all" || product.category === activeCategory;
@@ -86,6 +120,7 @@
 
   // Transparent cut-outs (.png) sit inside the frame; regular photos fill it
   function photoClass(src) {
+    if (/winter-wool-set-colors\.jpg$/i.test(src)) return "is-color-board";
     return /\.png$/i.test(src) ? "" : "is-photo";
   }
 
@@ -119,7 +154,7 @@
           aria-pressed="${color.name === active.name}"></button>`).join("")}</div>
     </fieldset>
     <p class="color-note">${active.photos?.length
-      ? `صور المنتج الفعلية للون ${safeText(active.name)}؛ معاينة المانيكان تقريبية.`
+      ? `الصورة المرفقة تعرض الألوان الأربعة؛ اللون المحدد هو ${safeText(active.name)}.`
       : `لا توجد صورة فعلية للون ${safeText(active.name)}؛ معاينته على المانيكان توضيحية.`}</p>`;
   }
 
@@ -130,10 +165,10 @@
       return `
       <article class="product-card ${selectedProductId === product.id ? "selected" : ""}" style="--product-color:${safeText(color.hex)}">
         <button class="product-image ${product.image ? "" : "is-placeholder"}" type="button"
-          data-try="${safeText(product.id)}" aria-label="جرّبي ${safeText(product.name)} على الدمية">
+          data-try="${safeText(product.id)}" aria-label="عرض صور ${safeText(product.name)}">
           <span class="product-number">0${index + 1}</span>
           ${productImage(product)}
-          <span class="try-label">جرّبي على الدمية ✦</span>
+          <span class="try-label">عرض صور القطعة ✦</span>
         </button>
         ${productThumbs(product)}
         <div class="product-info">
@@ -153,40 +188,13 @@
     emptyState.hidden = visibleProducts.length !== 0;
   }
 
-  function outfitMarkup(product) {
-    const color = safeText(product.color);
-    const accessory = product.outfit === "accessory";
-    if (accessory) {
-      return `<path d="M92 55 Q130 14 168 55" fill="none" stroke="${color}" stroke-width="13" stroke-linecap="round"/><circle cx="130" cy="35" r="13" fill="${color}"/><path d="M130 25 C116 15 115 34 130 36 C145 34 144 15 130 25" fill="#f8e6cf"/>`;
-    }
-    if (product.outfit === "bib") {
-      return `<path d="M109 119 Q130 130 151 119 L153 145 L166 175 Q130 194 94 175 L107 145Z" fill="${color}"/><circle cx="130" cy="163" r="8" fill="#fff9f4" fill-opacity=".8"/><path d="M108 128 Q130 143 152 128" fill="none" stroke="#fff9f4" stroke-opacity=".75" stroke-width="3"/>`;
-    }
-    if (product.outfit === "dress") {
-      return `<path d="M101 117 Q130 106 159 117 L171 185 Q175 206 194 278 Q130 293 66 278 Q85 206 89 185Z" fill="${color}"/><path d="M101 117 Q130 135 159 117 L163 183 Q130 196 97 183Z" fill="${color}" stroke="#fff9f4" stroke-opacity=".65" stroke-width="3"/><path d="M91 201 Q130 215 169 201" fill="none" stroke="#fff9f4" stroke-opacity=".7" stroke-width="3"/>`;
-    }
-    if (product.outfit === "set") {
-      return `<path d="M101 117 Q130 107 159 117 L169 184 L158 192 L153 169 L153 214 L107 214 L107 169 L102 192 L91 184Z" fill="${color}"/><path d="M107 214 L153 214 L163 279 L97 279Z" fill="${color}"/><path d="M130 121 L130 209" stroke="#fff9f4" stroke-opacity=".6" stroke-width="3"/>`;
-    }
-    return `<path d="M101 117 Q130 106 159 117 L170 185 L157 193 L152 165 L156 279 L104 279 L108 165 L103 193 L90 185Z" fill="${color}"/><path d="M108 165 L152 165" stroke="#fff9f4" stroke-opacity=".7" stroke-width="3"/>`;
-  }
-
   function selectProduct(productId) {
     const product = products.find((item) => item.id === productId);
     if (!product) return;
     selectedProductId = productId;
     const color = selectedColor(product);
-    const styledProduct = { ...product, color: color.hex, colorName: color.name };
-    dollOutfit.innerHTML = outfitMarkup(styledProduct);
-    window.MINI_BABY_SET_MANNEQUIN_COLOR?.(color.hex);
-    if (window.MINI_BABY_PHOTO_MODEL) {
-      document.querySelector("#doll-hint").textContent = `معاينة ثابتة للون ${color.name}`;
-      document.querySelector("#doll-stage").setAttribute("aria-label", `معاينة ثابتة لطقم بيبي باللون ${color.name}`);
-    } else {
-      document.querySelector("#doll-hint").textContent = `الآن على الدمية: ${product.name} · ${color.name}`;
-      document.querySelector("#doll-stage").setAttribute("aria-label", `دمية ترتدي ${product.name}`);
-    }
-    window.dispatchEvent(new CustomEvent("mini-baby:try-on", { detail: styledProduct }));
+    document.querySelector("#doll-hint").textContent = `الصورة تعرض الألوان الأربعة؛ اخترتِ ${color.name}.`;
+    document.querySelector("#doll-stage").setAttribute("aria-label", `صورة الطقم على المانيكان بالألوان الأربعة، اللون المحدد ${color.name}`);
     renderProducts();
   }
 
@@ -277,6 +285,7 @@
       const color = product?.colors?.[Number(colorButton.dataset.colorIndex)];
       if (!product || !color) return;
       selectedColors.set(product.id, color);
+      activePhotos.set(product.id, 0);
       selectProduct(product.id);
       return;
     }
@@ -338,6 +347,7 @@
     contactLink.rel = "noopener noreferrer";
   }
 
+  renderBusinessInfo();
   renderCategories();
   renderProducts();
   renderCart();
