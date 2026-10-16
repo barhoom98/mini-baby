@@ -28,6 +28,19 @@ if (stage && canvas) {
     scene.add(doll);
     const clothes = new THREE.Group();
     doll.add(clothes);
+    const knitTexturePath = "assets/products/winter-wool-knit-texture.jpg";
+    const knitDiffuseTexture = new THREE.TextureLoader().load(knitTexturePath);
+    knitDiffuseTexture.colorSpace = THREE.SRGBColorSpace;
+    knitDiffuseTexture.wrapS = THREE.RepeatWrapping;
+    knitDiffuseTexture.wrapT = THREE.RepeatWrapping;
+    knitDiffuseTexture.repeat.set(1.25, 1.6);
+    knitDiffuseTexture.anisotropy = renderer.capabilities.getMaxAnisotropy();
+    const knitBumpTexture = new THREE.TextureLoader().load(knitTexturePath);
+    knitBumpTexture.colorSpace = THREE.NoColorSpace;
+    knitBumpTexture.wrapS = THREE.RepeatWrapping;
+    knitBumpTexture.wrapT = THREE.RepeatWrapping;
+    knitBumpTexture.repeat.set(1.25, 1.6);
+    knitBumpTexture.anisotropy = renderer.capabilities.getMaxAnisotropy();
 
     const skin = new THREE.MeshStandardMaterial({ color: "#f1c9ae", roughness: 0.84 });
     const hair = new THREE.MeshStandardMaterial({ color: "#76564a", roughness: 0.92 });
@@ -84,54 +97,125 @@ if (stage && canvas) {
       return mesh;
     }
 
-    function makeKnitTexture() {
-      const tile = document.createElement("canvas");
-      tile.width = 128;
-      tile.height = 128;
-      const context = tile.getContext("2d");
-      context.fillStyle = "#f4f1e9";
-      context.fillRect(0, 0, tile.width, tile.height);
-      context.strokeStyle = "#d9d4c9";
-      context.lineWidth = 2.2;
-      for (let y = 0; y < 128; y += 12) {
-        for (let x = 0; x < 128; x += 8) {
-          const offset = (Math.floor(y / 12) % 2) * 4;
-          context.beginPath();
-          context.moveTo(x + offset + 1, y + 2);
-          context.bezierCurveTo(x + offset + 8, y + 2, x + offset + 8, y + 10, x + offset + 1, y + 10);
-          context.stroke();
+    function makeKnitTexture(ribbed = false) {
+      const diffuse = document.createElement("canvas");
+      const relief = document.createElement("canvas");
+      diffuse.width = relief.width = 256;
+      diffuse.height = relief.height = 256;
+      const color = diffuse.getContext("2d");
+      const bump = relief.getContext("2d");
+
+      color.fillStyle = "#efeee9";
+      color.fillRect(0, 0, 256, 256);
+      bump.fillStyle = "#888888";
+      bump.fillRect(0, 0, 256, 256);
+
+      if (ribbed) {
+        for (let x = 0; x < 256; x += 8) {
+          color.beginPath();
+          color.moveTo(x + 2, 0);
+          color.bezierCurveTo(x - 1, 72, x + 5, 176, x + 2, 256);
+          color.strokeStyle = "#d2d0c8";
+          color.lineWidth = 2;
+          color.stroke();
+          color.beginPath();
+          color.moveTo(x + 5, 0);
+          color.bezierCurveTo(x + 2, 72, x + 8, 176, x + 5, 256);
+          color.strokeStyle = "#fffefa";
+          color.lineWidth = 2;
+          color.stroke();
+          bump.beginPath();
+          bump.moveTo(x + 2, 0);
+          bump.lineTo(x + 2, 256);
+          bump.strokeStyle = "#e0e0e0";
+          bump.lineWidth = 3;
+          bump.stroke();
+          bump.beginPath();
+          bump.moveTo(x + 6, 0);
+          bump.lineTo(x + 6, 256);
+          bump.strokeStyle = "#606060";
+          bump.lineWidth = 2;
+          bump.stroke();
+        }
+      } else {
+        for (let y = 0; y < 256; y += 12) {
+          for (let x = 0; x < 256; x += 12) {
+            const offset = (Math.floor(y / 12) % 2) * 6;
+            color.beginPath();
+            color.ellipse(x + offset + 6, y + 6, 4, 5, 0, 0, Math.PI * 2);
+            color.fillStyle = "#dbd9d2";
+            color.fill();
+            color.beginPath();
+            color.ellipse(x + offset + 5, y + 5, 3, 4, 0, Math.PI * 1.1, Math.PI * 1.9);
+            color.strokeStyle = "#fffefa";
+            color.lineWidth = 1.5;
+            color.stroke();
+            bump.beginPath();
+            bump.ellipse(x + offset + 6, y + 6, 4, 5, 0, 0, Math.PI * 2);
+            bump.fillStyle = "#bdbdbd";
+            bump.fill();
+            bump.beginPath();
+            bump.ellipse(x + offset + 4, y + 4, 2, 3, 0, 0, Math.PI * 2);
+            bump.fillStyle = "#e8e8e8";
+            bump.fill();
+          }
+        }
+        for (const x of [38, 112, 186, 250]) {
+          color.beginPath();
+          color.moveTo(x - 16, 0);
+          color.bezierCurveTo(x + 23, 42, x + 23, 50, x - 16, 88);
+          color.bezierCurveTo(x - 27, 101, x - 27, 112, x + 16, 160);
+          color.bezierCurveTo(x + 28, 176, x + 28, 185, x - 16, 216);
+          color.bezierCurveTo(x - 25, 226, x - 25, 238, x + 16, 256);
+          color.strokeStyle = "#cbc9c1";
+          color.lineWidth = 5;
+          color.stroke();
+          color.beginPath();
+          color.moveTo(x - 9, 0);
+          color.bezierCurveTo(x + 28, 42, x + 28, 50, x - 9, 88);
+          color.bezierCurveTo(x - 20, 101, x - 20, 112, x + 23, 160);
+          color.bezierCurveTo(x + 35, 176, x + 35, 185, x - 9, 216);
+          color.bezierCurveTo(x - 18, 226, x - 18, 238, x + 23, 256);
+          color.strokeStyle = "#fdfcf8";
+          color.lineWidth = 2;
+          color.stroke();
+          bump.beginPath();
+          bump.moveTo(x - 16, 0);
+          bump.bezierCurveTo(x + 23, 42, x + 23, 50, x - 16, 88);
+          bump.bezierCurveTo(x - 27, 101, x - 27, 112, x + 16, 160);
+          bump.bezierCurveTo(x + 28, 176, x + 28, 185, x - 16, 216);
+          bump.bezierCurveTo(x - 25, 226, x - 25, 238, x + 16, 256);
+          bump.strokeStyle = "#eeeeee";
+          bump.lineWidth = 6;
+          bump.stroke();
         }
       }
-      context.strokeStyle = "#c9c2b6";
-      context.lineWidth = 3;
-      for (const x of [35, 93]) {
-        context.beginPath();
-        context.moveTo(x - 11, 0);
-        context.bezierCurveTo(x + 16, 28, x + 16, 36, x - 11, 64);
-        context.bezierCurveTo(x - 22, 77, x - 22, 87, x + 11, 128);
-        context.moveTo(x + 11, 0);
-        context.bezierCurveTo(x - 16, 28, x - 16, 36, x + 11, 64);
-        context.bezierCurveTo(x + 22, 77, x + 22, 87, x - 11, 128);
-        context.stroke();
-      }
-      const texture = new THREE.CanvasTexture(tile);
+
+      const texture = new THREE.CanvasTexture(diffuse);
+      const bumpMap = new THREE.CanvasTexture(relief);
       texture.colorSpace = THREE.SRGBColorSpace;
-      texture.wrapS = THREE.RepeatWrapping;
-      texture.wrapT = THREE.RepeatWrapping;
-      texture.repeat.set(1.5, 2);
-      return texture;
+      for (const map of [texture, bumpMap]) {
+        map.wrapS = THREE.RepeatWrapping;
+        map.wrapT = THREE.RepeatWrapping;
+        map.repeat.set(ribbed ? 0.8 : 1.25, ribbed ? 1 : 1.6);
+        map.anisotropy = renderer.capabilities.getMaxAnisotropy();
+      }
+      return { texture, bumpMap };
     }
 
-    function makeCloth(color, knit = false) {
+    function makeCloth(color, knit = false, ribbed = false) {
+      const maps = knit && ribbed ? makeKnitTexture(true) : null;
       return new THREE.MeshStandardMaterial({
         color,
-        map: knit ? makeKnitTexture() : null,
-        roughness: knit ? 0.96 : 0.88,
+        map: knit && !ribbed ? knitDiffuseTexture : maps?.texture ?? null,
+        bumpMap: knit && !ribbed ? knitBumpTexture : maps?.bumpMap ?? null,
+        bumpScale: knit ? (ribbed ? 0.006 : 0.014) : 0,
+        roughness: knit ? 1 : 0.88,
         side: THREE.DoubleSide
       });
     }
 
-    function makeSleeve(material, shoulder, wrist) {
+    function makeSleeve(material, ribbedMaterial, shoulder, wrist) {
       const start = new THREE.Vector3(...wrist);
       const end = new THREE.Vector3(...shoulder);
       const direction = end.clone().sub(start);
@@ -146,53 +230,66 @@ if (stage && canvas) {
       clothes.add(sleeve);
 
       const cuff = new THREE.Mesh(
-        new THREE.CylinderGeometry(0.0245, 0.024, 0.035, 24, 2),
-        material
+        new THREE.CylinderGeometry(0.035, 0.032, 0.04, 24, 4),
+        ribbedMaterial
       );
-      cuff.position.copy(new THREE.Vector3(...wrist)).add(direction.multiplyScalar(0.015));
+      cuff.position.copy(new THREE.Vector3(...wrist)).add(direction.multiplyScalar(0.02));
       cuff.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), direction);
       cuff.castShadow = true;
       clothes.add(cuff);
     }
 
-    function makeTrousers(material) {
+    function makeTrousers(material, ribbedMaterial) {
       for (const x of [-0.043, 0.043]) {
         const leg = makeRings([
-          [0.035, 0.026, 0.027],
-          [0.055, 0.031, 0.032],
-          [0.17, 0.034, 0.035],
-          [0.267, 0.039, 0.04]
+          [0.027, 0.036, 0.037],
+          [0.045, 0.04, 0.041],
+          [0.13, 0.043, 0.044],
+          [0.22, 0.046, 0.047],
+          [0.274, 0.049, 0.049]
         ], material);
         leg.position.x = x;
         const cuff = makeRings([
-          [0.047, 0.032, 0.033],
-          [0.063, 0.032, 0.033]
-        ], material);
+          [0.027, 0.037, 0.038],
+          [0.048, 0.041, 0.042]
+        ], ribbedMaterial);
         cuff.position.x = x;
       }
       makeRings([
-        [0.245, 0.077, 0.06],
-        [0.278, 0.078, 0.061],
-        [0.292, 0.068, 0.055]
+        [0.248, 0.078, 0.065],
+        [0.274, 0.08, 0.066],
+        [0.3, 0.077, 0.063]
       ], material);
+      makeRings([
+        [0.29, 0.078, 0.064],
+        [0.302, 0.079, 0.065],
+        [0.315, 0.078, 0.064]
+      ], ribbedMaterial);
     }
 
     function makeCardigan(product, fabric) {
+      const ribbed = makeCloth(product.color || "#dedbd2", true, true);
+      const torsoRings = [
+        [0.29, 0.08, 0.066],
+        [0.305, 0.086, 0.071],
+        [0.34, 0.086, 0.071],
+        [0.39, 0.084, 0.07],
+        [0.435, 0.09, 0.069],
+        [0.466, 0.094, 0.064],
+        [0.487, 0.076, 0.054],
+        [0.498, 0.055, 0.048]
+      ];
       makeRings([
-        [0.286, 0.072, 0.057],
-        [0.315, 0.079, 0.064],
-        [0.37, 0.081, 0.066],
-        [0.42, 0.077, 0.064],
-        [0.461, 0.088, 0.062],
-        [0.487, 0.061, 0.051],
-        [0.497, 0.05, 0.046]
-      ], fabric);
-      makeSleeve(fabric, [-0.076, 0.462, 0], [-0.13, 0.3, 0.005]);
-      makeSleeve(fabric, [0.076, 0.462, 0], [0.13, 0.3, 0.005]);
-      makeTrousers(fabric);
+        [0.29, 0.081, 0.067],
+        [0.305, 0.087, 0.072]
+      ], ribbed);
+      makeRings(torsoRings, fabric);
+      makeSleeve(fabric, ribbed, [-0.083, 0.465, 0], [-0.13, 0.3, 0.005]);
+      makeSleeve(fabric, ribbed, [0.083, 0.465, 0], [0.13, 0.3, 0.005]);
+      makeTrousers(fabric, ribbed);
 
       const buttonMaterial = new THREE.MeshStandardMaterial({ color: "#806b4e", roughness: 0.58 });
-      for (const [y, z] of [[0.463, 0.058], [0.424, 0.066], [0.385, 0.068], [0.346, 0.066], [0.308, 0.061]]) {
+      for (const [y, z] of [[0.463, 0.078], [0.424, 0.079], [0.385, 0.08], [0.346, 0.08], [0.308, 0.075]]) {
         const button = new THREE.Mesh(new THREE.CylinderGeometry(0.007, 0.007, 0.004, 20), buttonMaterial);
         button.position.set(-0.019, y, z);
         button.rotation.x = Math.PI / 2;
@@ -207,8 +304,55 @@ if (stage && canvas) {
         new THREE.BoxGeometry(0.009, 0.17, 0.003),
         new THREE.MeshStandardMaterial({ color: product.color || "#dedbd2", roughness: 0.96, map: fabric.map })
       );
-      placket.position.set(-0.019, 0.385, 0.066);
+      placket.position.set(-0.019, 0.385, 0.075);
       clothes.add(placket);
+
+      const cableMaterial = new THREE.MeshStandardMaterial({
+        color: product.color || "#dedbd2",
+        roughness: 1,
+        map: fabric.map,
+        bumpMap: fabric.bumpMap,
+        bumpScale: 0.014
+      });
+      for (const centerX of [-0.052, 0.052]) {
+        const cablePoints = [];
+        for (let index = 0; index <= 32; index += 1) {
+          const t = index / 32;
+          const y = 0.326 + t * 0.13;
+          const x = centerX + Math.sin(t * Math.PI * 4) * 0.009;
+          const ring = torsoRings.reduce((closest, candidate) =>
+            Math.abs(candidate[0] - y) < Math.abs(closest[0] - y) ? candidate : closest
+          );
+          const z = ring[2] * Math.sqrt(Math.max(0, 1 - (x * x) / (ring[1] * ring[1]))) + 0.0025;
+          cablePoints.push(new THREE.Vector3(x, y, z));
+        }
+        const cable = new THREE.Mesh(
+          new THREE.TubeGeometry(new THREE.CatmullRomCurve3(cablePoints), 72, 0.003, 8, false),
+          cableMaterial
+        );
+        cable.castShadow = true;
+        cable.receiveShadow = true;
+        clothes.add(cable);
+      }
+
+      const drawstring = new THREE.MeshStandardMaterial({ color: "#c9c3b6", roughness: 0.92 });
+      for (const side of [-1, 1]) {
+        const cord = new THREE.Mesh(
+          new THREE.TubeGeometry(
+            new THREE.CatmullRomCurve3([
+              new THREE.Vector3(0.006 * side, 0.311, 0.071),
+              new THREE.Vector3(0.006 * side, 0.276, 0.076),
+              new THREE.Vector3(0.01 * side, 0.255, 0.073)
+            ]),
+            20,
+            0.002,
+            6,
+            false
+          ),
+          drawstring
+        );
+        clothes.add(cord);
+      }
     }
 
     function makeBow(material) {
@@ -240,7 +384,8 @@ if (stage && canvas) {
         object.geometry?.dispose();
         const materials = Array.isArray(object.material) ? object.material : [object.material];
         materials.filter(Boolean).forEach((material) => {
-          material.map?.dispose();
+          if (material.map !== knitDiffuseTexture) material.map?.dispose();
+          if (material.bumpMap !== knitBumpTexture) material.bumpMap?.dispose();
           material.dispose();
         });
       });

@@ -24,16 +24,17 @@ window.MINI_BABY = {
           name: "سكني",
           hex: "#b9bcbc",
           photos: [
-            "assets/products/winter-wool-set-grey.png",
-            "assets/products/winter-wool-set-grey-detail.jpg",
-            "assets/products/winter-wool-set-grey-photo.jpg"
+            "assets/products/winter-wool-set-grey-front.jpg",
+            "assets/products/winter-wool-set-grey-back.jpg",
+            "assets/products/winter-wool-set-knit-detail.jpg",
+            "assets/products/winter-wool-set-cuff-detail.jpg"
           ]
         },
         { name: "أسود", hex: "#353438", photos: ["assets/products/winter-wool-set-black.jpg"] },
         { name: "بيج", hex: "#d5bd98" }
       ],
       outfit: "winter-knit-set",
-      image: "assets/products/winter-wool-set-grey.png",
+      image: "assets/products/winter-wool-set-grey-front.jpg",
       gallery: ["assets/products/winter-wool-set-grey-detail.jpg"]
     }
   ]
