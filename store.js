@@ -15,8 +15,8 @@ window.MINI_BABY = {
       description: "طقم شتوي من الصوف باللون السكني: بلوزة بأزرار مع بنطلون.",
       sizes: ["اسألي عن المقاسات المتوفرة"],
       price: 7,
-      color: "#b9bcbc",
-      outfit: "set",
+      color: "#dedbd2",
+      outfit: "winter-knit-set",
       image: "assets/products/winter-wool-set-grey.png",
       gallery: ["assets/products/winter-wool-set-grey-detail.jpg"]
     }

@@ -57,11 +57,13 @@ if (stage && canvas) {
 
     function makeRings(points, material, parent = clothes, segments = 40) {
       const positions = [];
+      const uvs = [];
       const indices = [];
       points.forEach(([y, rx, rz], ring) => {
         for (let step = 0; step <= segments; step += 1) {
           const angle = (step / segments) * Math.PI * 2;
           positions.push(Math.cos(angle) * rx, y, Math.sin(angle) * rz);
+          uvs.push(step / segments, ring / (points.length - 1));
           if (ring > 0 && step > 0) {
             const current = ring * (segments + 1) + step;
             const previous = current - segments - 1;
@@ -71,6 +73,7 @@ if (stage && canvas) {
       });
       const geometry = new THREE.BufferGeometry();
       geometry.setAttribute("position", new THREE.Float32BufferAttribute(positions, 3));
+      geometry.setAttribute("uv", new THREE.Float32BufferAttribute(uvs, 2));
       geometry.setIndex(indices);
       geometry.computeVertexNormals();
       const mesh = new THREE.Mesh(geometry, material);
@@ -81,12 +84,131 @@ if (stage && canvas) {
       return mesh;
     }
 
-    function makeCloth(color) {
+    function makeKnitTexture() {
+      const tile = document.createElement("canvas");
+      tile.width = 128;
+      tile.height = 128;
+      const context = tile.getContext("2d");
+      context.fillStyle = "#f4f1e9";
+      context.fillRect(0, 0, tile.width, tile.height);
+      context.strokeStyle = "#d9d4c9";
+      context.lineWidth = 2.2;
+      for (let y = 0; y < 128; y += 12) {
+        for (let x = 0; x < 128; x += 8) {
+          const offset = (Math.floor(y / 12) % 2) * 4;
+          context.beginPath();
+          context.moveTo(x + offset + 1, y + 2);
+          context.bezierCurveTo(x + offset + 8, y + 2, x + offset + 8, y + 10, x + offset + 1, y + 10);
+          context.stroke();
+        }
+      }
+      context.strokeStyle = "#c9c2b6";
+      context.lineWidth = 3;
+      for (const x of [35, 93]) {
+        context.beginPath();
+        context.moveTo(x - 11, 0);
+        context.bezierCurveTo(x + 16, 28, x + 16, 36, x - 11, 64);
+        context.bezierCurveTo(x - 22, 77, x - 22, 87, x + 11, 128);
+        context.moveTo(x + 11, 0);
+        context.bezierCurveTo(x - 16, 28, x - 16, 36, x + 11, 64);
+        context.bezierCurveTo(x + 22, 77, x + 22, 87, x - 11, 128);
+        context.stroke();
+      }
+      const texture = new THREE.CanvasTexture(tile);
+      texture.colorSpace = THREE.SRGBColorSpace;
+      texture.wrapS = THREE.RepeatWrapping;
+      texture.wrapT = THREE.RepeatWrapping;
+      texture.repeat.set(1.5, 2);
+      return texture;
+    }
+
+    function makeCloth(color, knit = false) {
       return new THREE.MeshStandardMaterial({
         color,
-        roughness: 0.88,
+        map: knit ? makeKnitTexture() : null,
+        roughness: knit ? 0.96 : 0.88,
         side: THREE.DoubleSide
       });
+    }
+
+    function makeSleeve(material, shoulder, wrist) {
+      const start = new THREE.Vector3(...wrist);
+      const end = new THREE.Vector3(...shoulder);
+      const direction = end.clone().sub(start);
+      const sleeve = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.033, 0.024, direction.length(), 24, 8),
+        material
+      );
+      sleeve.position.copy(start.add(end).multiplyScalar(0.5));
+      sleeve.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), direction.normalize());
+      sleeve.castShadow = true;
+      sleeve.receiveShadow = true;
+      clothes.add(sleeve);
+
+      const cuff = new THREE.Mesh(
+        new THREE.CylinderGeometry(0.0245, 0.024, 0.035, 24, 2),
+        material
+      );
+      cuff.position.copy(new THREE.Vector3(...wrist)).add(direction.multiplyScalar(0.015));
+      cuff.quaternion.setFromUnitVectors(new THREE.Vector3(0, 1, 0), direction);
+      cuff.castShadow = true;
+      clothes.add(cuff);
+    }
+
+    function makeTrousers(material) {
+      for (const x of [-0.043, 0.043]) {
+        const leg = makeRings([
+          [0.035, 0.026, 0.027],
+          [0.055, 0.031, 0.032],
+          [0.17, 0.034, 0.035],
+          [0.267, 0.039, 0.04]
+        ], material);
+        leg.position.x = x;
+        const cuff = makeRings([
+          [0.047, 0.032, 0.033],
+          [0.063, 0.032, 0.033]
+        ], material);
+        cuff.position.x = x;
+      }
+      makeRings([
+        [0.245, 0.077, 0.06],
+        [0.278, 0.078, 0.061],
+        [0.292, 0.068, 0.055]
+      ], material);
+    }
+
+    function makeCardigan(product, fabric) {
+      makeRings([
+        [0.286, 0.072, 0.057],
+        [0.315, 0.079, 0.064],
+        [0.37, 0.081, 0.066],
+        [0.42, 0.077, 0.064],
+        [0.461, 0.088, 0.062],
+        [0.487, 0.061, 0.051],
+        [0.497, 0.05, 0.046]
+      ], fabric);
+      makeSleeve(fabric, [-0.076, 0.462, 0], [-0.13, 0.3, 0.005]);
+      makeSleeve(fabric, [0.076, 0.462, 0], [0.13, 0.3, 0.005]);
+      makeTrousers(fabric);
+
+      const buttonMaterial = new THREE.MeshStandardMaterial({ color: "#806b4e", roughness: 0.58 });
+      for (const [y, z] of [[0.463, 0.058], [0.424, 0.066], [0.385, 0.068], [0.346, 0.066], [0.308, 0.061]]) {
+        const button = new THREE.Mesh(new THREE.CylinderGeometry(0.007, 0.007, 0.004, 20), buttonMaterial);
+        button.position.set(-0.019, y, z);
+        button.rotation.x = Math.PI / 2;
+        button.castShadow = true;
+        clothes.add(button);
+        for (const offset of [-0.002, 0.002]) {
+          ellipsoid(new THREE.MeshStandardMaterial({ color: "#e1d6bd" }), [-0.019 + offset, y, z + 0.003], [0.0008, 0.001, 0.0005], clothes);
+        }
+      }
+
+      const placket = new THREE.Mesh(
+        new THREE.BoxGeometry(0.009, 0.17, 0.003),
+        new THREE.MeshStandardMaterial({ color: product.color || "#dedbd2", roughness: 0.96, map: fabric.map })
+      );
+      placket.position.set(-0.019, 0.385, 0.066);
+      clothes.add(placket);
     }
 
     function makeBow(material) {
@@ -116,12 +238,19 @@ if (stage && canvas) {
     function dressProduct(product) {
       clothes.traverse((object) => {
         object.geometry?.dispose();
-        if (Array.isArray(object.material)) object.material.forEach((material) => material.dispose());
-        else object.material?.dispose();
+        const materials = Array.isArray(object.material) ? object.material : [object.material];
+        materials.filter(Boolean).forEach((material) => {
+          material.map?.dispose();
+          material.dispose();
+        });
       });
       clothes.clear();
-      const fabric = makeCloth(product.color || "#c59389");
+      const winterKnit = product.outfit === "winter-knit-set";
+      const fabric = makeCloth(product.color || "#c59389", winterKnit);
       switch (product.outfit) {
+        case "winter-knit-set":
+          makeCardigan(product, fabric);
+          break;
         case "accessory": {
           const band = new THREE.Mesh(
             new THREE.TorusGeometry(0.073, 0.007, 10, 48, Math.PI),
