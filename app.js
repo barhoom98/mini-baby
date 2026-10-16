@@ -119,8 +119,8 @@
           aria-pressed="${color.name === active.name}"></button>`).join("")}</div>
     </fieldset>
     <p class="color-note">${active.photos?.length
-      ? `صور المنتج الفعلية للون ${safeText(active.name)}.${active.name === "سكني" ? "" : " صورة المانيكان تعرض اللون السكني الأصلي."}`
-      : "لا توجد صورة فعلية للون البيج ضمن الصور المرسلة؛ تظهر معاينته في صورة المنتج فقط."}</p>`;
+      ? `صور المنتج الفعلية للون ${safeText(active.name)}؛ معاينة المانيكان تقريبية.`
+      : `لا توجد صورة فعلية للون ${safeText(active.name)}؛ معاينته على المانيكان توضيحية.`}</p>`;
   }
 
   function renderProducts() {
@@ -178,7 +178,11 @@
     const color = selectedColor(product);
     const styledProduct = { ...product, color: color.hex, colorName: color.name };
     dollOutfit.innerHTML = outfitMarkup(styledProduct);
-    if (!window.MINI_BABY_PHOTO_MODEL) {
+    window.MINI_BABY_SET_MANNEQUIN_COLOR?.(color.hex);
+    if (window.MINI_BABY_PHOTO_MODEL) {
+      document.querySelector("#doll-hint").textContent = `معاينة ثابتة للون ${color.name}`;
+      document.querySelector("#doll-stage").setAttribute("aria-label", `معاينة ثابتة لطقم بيبي باللون ${color.name}`);
+    } else {
       document.querySelector("#doll-hint").textContent = `الآن على الدمية: ${product.name} · ${color.name}`;
       document.querySelector("#doll-stage").setAttribute("aria-label", `دمية ترتدي ${product.name}`);
     }

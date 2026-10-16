@@ -30,6 +30,12 @@ if (stage && canvas) {
     const photoMannequin = new THREE.Group();
     photoMannequin.visible = false;
     scene.add(photoMannequin);
+    const initialProduct = window.MINI_BABY?.products?.[0];
+    let mannequinColor = initialProduct?.colors?.find((color) => color.name === initialProduct.colorName)?.hex
+      || initialProduct?.color
+      || "#b9bcbc";
+    let photoMaterials = [];
+    let clothingMask;
     const clothes = new THREE.Group();
     doll.add(clothes);
     const knitTexturePath = "assets/products/winter-wool-knit-texture.jpg";
@@ -383,6 +389,176 @@ if (stage && canvas) {
       ellipsoid(new THREE.MeshStandardMaterial({ color: "#fff7ef" }), [0, 0.445, 0.080], [0.008, 0.008, 0.003], clothes);
     }
 
+    function makeClothingMask(width, height) {
+      const mask = document.createElement("canvas");
+      mask.width = width;
+      mask.height = height;
+      const context = mask.getContext("2d");
+      if (!context) throw new Error("Could not create the mannequin color mask.");
+      context.scale(width / 470, height / 640);
+      context.fillStyle = "#fff";
+      context.beginPath();
+      context.moveTo(207, 137);
+      context.lineTo(226, 142);
+      context.lineTo(235, 151);
+      context.lineTo(247, 143);
+      context.lineTo(265, 140);
+      context.lineTo(281, 145);
+      context.lineTo(295, 144);
+      context.lineTo(314, 154);
+      context.lineTo(329, 175);
+      context.lineTo(350, 216);
+      context.lineTo(380, 271);
+      context.lineTo(399, 300);
+      context.lineTo(402, 316);
+      context.lineTo(396, 328);
+      context.lineTo(388, 331);
+      context.lineTo(379, 324);
+      context.lineTo(362, 298);
+      context.lineTo(343, 264);
+      context.lineTo(326, 231);
+      context.lineTo(322, 221);
+      context.lineTo(320, 324);
+      context.lineTo(314, 344);
+      context.lineTo(308, 354);
+      context.lineTo(160, 354);
+      context.lineTo(154, 345);
+      context.lineTo(157, 227);
+      context.lineTo(141, 254);
+      context.lineTo(121, 292);
+      context.lineTo(108, 322);
+      context.lineTo(99, 341);
+      context.lineTo(92, 352);
+      context.lineTo(83, 350);
+      context.lineTo(75, 344);
+      context.lineTo(73, 333);
+      context.lineTo(78, 315);
+      context.lineTo(88, 294);
+      context.lineTo(106, 259);
+      context.lineTo(128, 214);
+      context.lineTo(148, 176);
+      context.lineTo(165, 154);
+      context.lineTo(183, 143);
+      context.lineTo(199, 138);
+      context.closePath();
+      context.fill();
+
+      context.beginPath();
+      context.moveTo(165, 348);
+      context.lineTo(304, 348);
+      context.lineTo(306, 390);
+      context.lineTo(310, 430);
+      context.lineTo(305, 466);
+      context.lineTo(299, 525);
+      context.lineTo(294, 552);
+      context.lineTo(287, 560);
+      context.lineTo(274, 562);
+      context.lineTo(263, 559);
+      context.lineTo(257, 550);
+      context.lineTo(254, 525);
+      context.lineTo(251, 484);
+      context.lineTo(245, 454);
+      context.lineTo(237, 430);
+      context.lineTo(230, 448);
+      context.lineTo(223, 488);
+      context.lineTo(216, 535);
+      context.lineTo(207, 559);
+      context.lineTo(199, 566);
+      context.lineTo(181, 565);
+      context.lineTo(166, 559);
+      context.lineTo(160, 548);
+      context.lineTo(155, 520);
+      context.lineTo(149, 481);
+      context.lineTo(146, 449);
+      context.lineTo(147, 422);
+      context.lineTo(153, 392);
+      context.closePath();
+      context.fill();
+
+      context.beginPath();
+      context.moveTo(295, 144);
+      context.lineTo(313, 150);
+      context.lineTo(327, 162);
+      context.lineTo(339, 177);
+      context.lineTo(354, 207);
+      context.lineTo(371, 240);
+      context.lineTo(388, 277);
+      context.lineTo(400, 302);
+      context.lineTo(402, 315);
+      context.lineTo(398, 325);
+      context.lineTo(390, 328);
+      context.lineTo(381, 321);
+      context.lineTo(366, 299);
+      context.lineTo(350, 270);
+      context.lineTo(335, 241);
+      context.lineTo(323, 219);
+      context.lineTo(319, 213);
+      context.lineTo(317, 234);
+      context.lineTo(319, 320);
+      context.lineTo(313, 337);
+      context.lineTo(305, 343);
+      context.lineTo(300, 338);
+      context.lineTo(300, 204);
+      context.lineTo(293, 174);
+      context.closePath();
+      context.fill();
+      context.fillRect(295, 145, 115, 190);
+
+      return context.getImageData(0, 0, width, height).data;
+    }
+
+    function colorizeMannequin(hex) {
+      mannequinColor = hex;
+      if (!photoMaterials.length) return;
+      for (const { material, sourceMap, coloredMap: previousColoredMap } of photoMaterials) {
+        if (previousColoredMap) previousColoredMap.dispose();
+        if (hex.toLowerCase() === "#b9bcbc") {
+          material.map = sourceMap;
+          material.needsUpdate = true;
+          photoMaterials = photoMaterials.map((entry) =>
+            entry.material === material ? { ...entry, coloredMap: null } : entry
+          );
+          continue;
+        }
+
+        const image = sourceMap.image;
+        const canvas = document.createElement("canvas");
+        canvas.width = image.width;
+        canvas.height = image.height;
+        const context = canvas.getContext("2d", { willReadFrequently: true });
+        if (!context) throw new Error("Could not recolor the mannequin preview.");
+        context.drawImage(image, 0, 0);
+        const imageData = context.getImageData(0, 0, canvas.width, canvas.height);
+        const mask = clothingMask ??= makeClothingMask(canvas.width, canvas.height);
+        const red = Number.parseInt(hex.slice(1, 3), 16);
+        const green = Number.parseInt(hex.slice(3, 5), 16);
+        const blue = Number.parseInt(hex.slice(5, 7), 16);
+
+        for (let index = 0; index < imageData.data.length; index += 4) {
+          if (!mask[index + 3]) continue;
+          const sourceRed = imageData.data[index];
+          const sourceGreen = imageData.data[index + 1];
+          const sourceBlue = imageData.data[index + 2];
+          if (sourceRed - sourceGreen > 52 || sourceGreen - sourceBlue > 52) continue;
+          const brightness = (sourceRed * 0.2126 + sourceGreen * 0.7152 + sourceBlue * 0.0722) / 255;
+          if (brightness > 0.88) continue;
+          const shade = Math.min(1, Math.max(0.3, 0.32 + brightness * 0.88));
+          imageData.data[index] = red * shade;
+          imageData.data[index + 1] = green * shade;
+          imageData.data[index + 2] = blue * shade;
+        }
+        context.putImageData(imageData, 0, 0);
+        const coloredMap = sourceMap.clone();
+        coloredMap.source = new THREE.Source(canvas);
+        coloredMap.needsUpdate = true;
+        material.map = coloredMap;
+        material.needsUpdate = true;
+        photoMaterials = photoMaterials.map((entry) =>
+          entry.material === material ? { ...entry, coloredMap } : entry
+        );
+      }
+    }
+
     function dressProduct(product) {
       clothes.traverse((object) => {
         object.geometry?.dispose();
@@ -473,6 +649,13 @@ if (stage && canvas) {
       "assets/objects/mini-baby-mannequin.glb",
       (gltf) => {
         const model = gltf.scene;
+        model.traverse((object) => {
+          if (!object.isMesh) return;
+          const materials = Array.isArray(object.material) ? object.material : [object.material];
+          for (const material of materials) {
+            if (material?.map) photoMaterials.push({ material, sourceMap: material.map, coloredMap: null });
+          }
+        });
         const bounds = new THREE.Box3().setFromObject(model);
         const size = bounds.getSize(new THREE.Vector3());
         const center = bounds.getCenter(new THREE.Vector3());
@@ -480,17 +663,23 @@ if (stage && canvas) {
         model.scale.setScalar(scale);
         model.position.set(-center.x * scale, -bounds.min.y * scale, 0);
         photoMannequin.add(model);
+        try {
+          colorizeMannequin(mannequinColor);
+        } catch (error) {
+          console.error("Could not apply the selected mannequin color; showing the original photo.", error);
+        }
         photoMannequin.visible = true;
         doll.visible = false;
         floor.visible = false;
         window.MINI_BABY_PHOTO_MODEL = true;
         stage.classList.add("webgl-ready", "photo-mannequin");
-        stage.setAttribute("aria-label", "صورة المانيكان الأصلي بلباس الطقم، معروضة أماميًا داخل نموذج GLB");
+        stage.setAttribute("aria-label", `معاينة ثابتة لمانيكان يرتدي الطقم باللون ${initialProduct?.colorName || "سكني"}`);
         document.querySelector(".doll-panel").classList.add("photo-mannequin");
-        document.querySelector("#doll-title").textContent = "المانيكان الأصلي";
-        document.querySelector(".doll-heading .eyebrow").textContent = "الصورة المرجعية";
-        document.querySelector("#doll-hint").textContent = "الصورة الأصلية للطقم داخل GLB · عرض أمامي فقط";
-        document.querySelector(".try-on-label").textContent = "المانيكان مطابق للصورة المرفقة · ملف GLB بواجهة أمامية وليس مجسمًا قابلًا للدوران";
+        window.MINI_BABY_SET_MANNEQUIN_COLOR = colorizeMannequin;
+        document.querySelector("#doll-title").textContent = "معاينة ألوان الطقم";
+        document.querySelector(".doll-heading .eyebrow").textContent = "اختاري اللون";
+        document.querySelector("#doll-hint").textContent = `المانيكان بصورة ثابتة · اللون المختار: ${initialProduct?.colorName || "سكني"}`;
+        document.querySelector(".try-on-label").textContent = "معاينة لونية تقريبية على الصورة · الصور الفعلية للمنتج تظهر بجانبها";
       },
       undefined,
       (error) => console.error("Could not load the GLB mannequin; showing the 3D fallback.", error)
@@ -537,9 +726,18 @@ if (stage && canvas) {
       requestAnimationFrame(animate);
     }
 
-    const initialProduct = window.MINI_BABY?.products?.[0];
     if (initialProduct) dressProduct(initialProduct);
-    window.addEventListener("mini-baby:try-on", (event) => dressProduct(event.detail));
+    window.addEventListener("mini-baby:try-on", (event) => {
+      mannequinColor = event.detail.color || mannequinColor;
+      if (window.MINI_BABY_SET_MANNEQUIN_COLOR) {
+        try {
+          window.MINI_BABY_SET_MANNEQUIN_COLOR(mannequinColor);
+        } catch (error) {
+          console.error("Could not update the mannequin color preview.", error);
+        }
+      }
+      dressProduct(event.detail);
+    });
     animate();
   } catch (error) {
     console.error("The 3D mannequin could not be initialized; showing the illustrated fallback.", error);
