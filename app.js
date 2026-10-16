@@ -129,6 +129,7 @@
     dollOutfit.innerHTML = outfitMarkup(product);
     document.querySelector("#doll-hint").textContent = `الآن على الدمية: ${product.name}`;
     document.querySelector("#doll-stage").setAttribute("aria-label", `دمية ترتدي ${product.name}`);
+    window.dispatchEvent(new CustomEvent("mini-baby:try-on", { detail: product }));
     renderProducts();
   }
 

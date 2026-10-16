@@ -71,7 +71,12 @@
               <span class="sparkle" aria-hidden="true">✳</span>
             </div>
             <p class="doll-hint" id="doll-hint">اختاري قطعة من المجموعة لتشاهديها على الدمية.</p>
-            <div class="doll-stage" id="doll-stage" role="img" aria-label="دمية ترتدي القطعة المختارة">
+            <div class="doll-measurements" aria-label="قياسات الدمية التقريبية">
+              <span><b>75 سم</b><small>الطول</small></span>
+              <span><b>47 سم</b><small>محيط الصدر التقريبي</small></span>
+            </div>
+            <div class="doll-stage" id="doll-stage" role="img" aria-label="دمية ثلاثية الأبعاد لطفل بعمر سنة تقريبًا">
+              <canvas id="doll-canvas" aria-hidden="true"></canvas>
               <svg class="doll-svg" viewBox="0 0 260 390" aria-hidden="true">
                 <ellipse cx="130" cy="365" rx="78" ry="12" fill="#e8d9d0"/>
                 <path d="M92 278 L88 348 Q88 360 99 360 L113 360 L124 286 M168 278 L173 348 Q173 360 162 360 L148 360 L137 286" fill="#efcbb6"/>
@@ -86,7 +91,11 @@
               </svg>
               <span class="doll-badge">mini style <span aria-hidden="true">♡</span></span>
             </div>
-            <div class="try-on-label"><span aria-hidden="true">✦</span> تنسيقكِ الصغير يبدأ من هنا</div>
+            <div class="doll-controls" aria-label="أدوات تدوير الدمية">
+              <button type="button" data-rotate="-0.45" aria-label="تدوير الدمية لليسار">↶</button>
+              <button type="button" data-rotate="0.45" aria-label="تدوير الدمية لليمين">↷</button>
+            </div>
+            <div class="try-on-label"><span aria-hidden="true">✦</span> اسحبي الدمية لتدويرها · القياسات تقريبية وليست جدول مقاسات</div>
           </aside>
         </div>
       </section>
@@ -117,5 +126,13 @@
       </div>
     </aside>
     <div class="toast" id="toast" role="status" aria-live="polite"></div>
+    <script type="importmap">
+      {
+        "imports": {
+          "three": "https://cdn.jsdelivr.net/npm/three@0.180.0/build/three.module.js"
+        }
+      }
+    </script>
+    <script type="module" src="doll-3d.js"></script>
   </body>
 </html>
