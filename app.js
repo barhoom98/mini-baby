@@ -33,8 +33,8 @@
         const color = product.colors?.find((entry) => entry.name === item.colorName);
         return {
           ...item,
-          colorName: color?.name || item.colorName || product.colorName || "اللون الأساسي",
-          colorHex: color?.hex || item.colorHex || product.color
+          colorName: color?.name || item.colorName || product.colorName || "",
+          colorHex: color?.hex || item.colorHex || product.color || "#dedbd2"
         };
       });
     } catch (error) {
@@ -55,7 +55,7 @@
 
   function selectedColor(product) {
     return selectedColors.get(product.id) || {
-      name: product.colorName || "اللون الأساسي",
+      name: product.colorName || "",
       hex: product.color
     };
   }
@@ -114,14 +114,15 @@
   function productPhotos(product) {
     const color = selectedColor(product);
     if (color.photos) return color.photos.filter(Boolean);
-    if (color.name !== product.colorName) return [];
+    if (product.colorName && color.name !== product.colorName) return [];
     return [product.image, ...(product.gallery || [])].filter(Boolean);
   }
 
   // Transparent cut-outs (.png) sit inside the frame; regular photos fill it
   function photoClass(src) {
     if (/winter-wool-set-colors\.jpg$/i.test(src)) return "is-color-board";
-    if (/winter-wool-set-mannequin-/i.test(src)) return "is-mannequin";
+    if (/\/girls-[^/]+\/product\.jpg$/i.test(src)) return "is-product-photo";
+    if (/winter-wool-set-mannequin-|\/(?:front|back|mannequin)\.(?:jpg|png)$/i.test(src)) return "is-mannequin";
     return /\.png$/i.test(src) ? "" : "is-photo";
   }
 
@@ -171,7 +172,7 @@
         </button>
         ${productThumbs(product)}
         <div class="product-info">
-          <div class="product-title-row"><h3>${safeText(product.name)}</h3><b>${money(product.price)}</b></div>
+          <div class="product-title-row"><h3>${safeText(product.name)}</h3><b>${product.price == null ? "السعر عبر واتساب" : money(product.price)}</b></div>
           <p class="product-description">${safeText(product.description)}</p>
           <label class="size-label">المقاس
             <select data-size="${safeText(product.id)}" aria-label="مقاس ${safeText(product.name)}">
@@ -192,13 +193,19 @@
     if (!product) return;
     selectedProductId = productId;
     const color = selectedColor(product);
-    const mannequinImage = color.mannequin || color.photos?.[0] || product.image;
+    const mannequinImage = product.mannequin || color.mannequin || color.photos?.[0] || product.image;
     const dollStage = document.querySelector("#doll-stage");
     const stageImage = dollStage.querySelector("img");
-    document.querySelector("#doll-hint").textContent = `المانيكان باللون ${color.name}.`;
+    document.querySelector("#doll-hint").textContent = color.name
+      ? `المانيكان باللون ${color.name}.`
+      : `معاينة ${product.name}.`;
     stageImage.src = mannequinImage;
-    stageImage.alt = `طقم البيبي الصوفي على مانيكان منفرد باللون ${color.name}`;
-    dollStage.setAttribute("aria-label", `المانيكان مرتدٍ الطقم باللون ${color.name}`);
+    stageImage.alt = color.name
+      ? `${product.name} على مانيكان منفرد باللون ${color.name}`
+      : `${product.name} على المانيكان`;
+    dollStage.setAttribute("aria-label", color.name
+      ? `المانيكان مرتدٍ الطقم باللون ${color.name}`
+      : `معاينة ${product.name} على المانيكان`);
     renderProducts();
   }
 
@@ -215,9 +222,16 @@
     const product = products.find((item) => item.id === productId);
     if (!product) return;
     const color = selectedColor(product);
-    const existing = cart.find((item) => item.productId === productId && item.size === size && item.colorName === color.name);
+    const colorName = color.name || product.colorName || "";
+    const existing = cart.find((item) => item.productId === productId && item.size === size && (item.colorName || "") === colorName);
     if (existing) existing.quantity += 1;
-    else cart.push({ productId, size, colorName: color.name, colorHex: color.hex, quantity: 1 });
+    else cart.push({
+      productId,
+      size,
+      ...(colorName ? { colorName } : {}),
+      colorHex: color.hex || product.color,
+      quantity: 1
+    });
     persistCart();
     renderCart();
     showToast("أضيفت القطعة إلى سلّتك ♡");
@@ -229,21 +243,28 @@
     const totalCount = cart.reduce((sum, item) => sum + item.quantity, 0);
     const total = cart.reduce((sum, item) => {
       const product = products.find((entry) => entry.id === item.productId);
-      return sum + product.price * item.quantity;
+      return sum + (product.price ?? 0) * item.quantity;
     }, 0);
+    const hasUnpricedItems = cart.some((item) => products.find((entry) => entry.id === item.productId).price == null);
     document.querySelector("#cart-count").textContent = new Intl.NumberFormat("ar").format(totalCount);
-    document.querySelector("#cart-total").textContent = money(total);
+    document.querySelector("#cart-total").textContent = hasUnpricedItems ? "يحدد عبر واتساب" : money(total);
     document.querySelector("#checkout-button").disabled = totalCount === 0 || !whatsappNumber;
     document.querySelector("#checkout-note").textContent = whatsappNumber
       ? "سيتم إرسال تفاصيل طلبك برسالة واتساب."
       : "أضيفي رقم واتساب المحل في ملف store.js لتفعيل الطلب.";
     cartItems.innerHTML = cart.length ? cart.map((item) => {
       const product = products.find((entry) => entry.id === item.productId);
-      const colorName = item.colorName || product.colorName || "اللون الأساسي";
-      const colorHex = item.colorHex || product.color;
+      const colorName = item.colorName || product.colorName || "";
+      const colorHex = item.colorHex || product.color || "#dedbd2";
+      const itemImage = product.colors?.find((color) => color.name === colorName)?.photos?.[0] || product.image;
+      const itemDetails = [`المقاس ${safeText(item.size)}`, colorName && safeText(colorName), product.price == null
+        ? "السعر عبر واتساب"
+        : money(product.price)].filter(Boolean).join(" · ");
       return `<article class="cart-item">
-        <span class="cart-item-icon" style="--product-color:${safeText(colorHex)}" aria-hidden="true">♡</span>
-        <div class="cart-item-info"><b>${safeText(product.name)}</b><small>المقاس ${safeText(item.size)} · ${safeText(colorName)} · ${money(product.price)}</small>
+        ${itemImage
+          ? `<img class="cart-item-icon" src="${safeText(itemImage)}" alt="${safeText(product.name)}" loading="lazy">`
+          : `<span class="cart-item-icon" style="--product-color:${safeText(colorHex)}" aria-hidden="true">♡</span>`}
+        <div class="cart-item-info"><b>${safeText(product.name)}</b><small>${itemDetails}</small>
           <div class="quantity-controls">
             <button type="button" data-quantity="${safeText(product.id)}" data-size="${safeText(item.size)}" data-color-name="${safeText(colorName)}" data-change="1" aria-label="زيادة الكمية">+</button>
             <span>${item.quantity}</span>
@@ -337,10 +358,19 @@
     if (!whatsappNumber || cart.length === 0) return;
     const lines = cart.map((item) => {
       const product = products.find((entry) => entry.id === item.productId);
-      return `• ${product.name} — المقاس ${item.size} — ${item.colorName || product.colorName || "اللون الأساسي"} × ${item.quantity} — ${money(product.price * item.quantity)}`;
+      const colorName = item.colorName || product.colorName;
+      const details = [
+        `المقاس ${item.size}`,
+        colorName,
+        `الكمية ${item.quantity}`,
+        product.price == null ? "السعر يحدد عبر واتساب" : money(product.price * item.quantity)
+      ].filter(Boolean);
+      return `• ${product.name} — ${details.join(" — ")}`;
     });
-    const total = cart.reduce((sum, item) => sum + products.find((entry) => entry.id === item.productId).price * item.quantity, 0);
-    const message = `مرحباً MINI BABY، أرغب بطلب:\n${lines.join("\n")}\n\nالمجموع: ${money(total)}`;
+    const hasUnpricedItems = cart.some((item) => products.find((entry) => entry.id === item.productId).price == null);
+    const total = cart.reduce((sum, item) => sum + (products.find((entry) => entry.id === item.productId).price ?? 0) * item.quantity, 0);
+    const totalMessage = hasUnpricedItems ? "المجموع يحدد عبر واتساب" : `المجموع: ${money(total)}`;
+    const message = `مرحباً MINI BABY، أرغب بطلب:\n${lines.join("\n")}\n\n${totalMessage}`;
     window.open(`https://wa.me/${whatsappNumber.replace(/\D/g, "")}?text=${encodeURIComponent(message)}`, "_blank", "noopener,noreferrer");
   });
 

@@ -71,6 +71,78 @@ window.MINI_BABY = {
       outfit: "winter-knit-set",
       image: "assets/products/winter-wool-set-grey-front.jpg",
       gallery: ["assets/products/winter-wool-set-grey-detail.jpg"]
+    },
+    {
+      id: "girls-red-rose-dress",
+      name: "فستان أحمر بوردات سوداء",
+      category: "clothes",
+      description: "فستان أحمر بدون أكمام، مزين بوردة سوداء على الصدر ووردات أسفل التنورة مع شريط أسود.",
+      sizes: ["1", "2", "3", "4"],
+      price: null,
+      color: "#a51932",
+      image: "assets/products/girls-red-rose-dress/product.jpg",
+      mannequin: "assets/products/girls-red-rose-dress/front.jpg",
+      gallery: [
+        "assets/products/girls-red-rose-dress/back.jpg",
+        "assets/products/girls-red-rose-dress/detail.jpg"
+      ]
+    },
+    {
+      id: "girls-yellow-navy-dress",
+      name: "فستان أميرة أصفر وكحلي",
+      category: "clothes",
+      description: "فستان أصفر وكحلي بنقشة ورود ذهبية وأكمام منفوشة وكشكش، وتظهر معه حقيبة وربطة شعر وحذاء.",
+      sizes: ["1", "2", "3", "4"],
+      price: null,
+      color: "#e1bd39",
+      image: "assets/products/girls-yellow-navy-dress/product.jpg",
+      mannequin: "assets/products/girls-yellow-navy-dress/front.png",
+      gallery: [
+        "assets/products/girls-yellow-navy-dress/back.png",
+        "assets/products/girls-yellow-navy-dress/detail.jpg"
+      ]
+    },
+    {
+      id: "girls-red-navy-dress",
+      name: "فستان أحمر وكحلي مزين بالورد",
+      category: "clothes",
+      description: "فستان بدون أكمام باللونين الأحمر والكحلي، مع فيونكة وورود قماشية وتفاصيل حمراء على التنورة.",
+      sizes: ["1", "2", "3", "4"],
+      price: null,
+      color: "#8e2139",
+      image: "assets/products/girls-red-navy-dress/product.jpg",
+      mannequin: "assets/products/girls-red-navy-dress/front.jpg",
+      gallery: [
+        "assets/products/girls-red-navy-dress/back.jpg",
+        "assets/products/girls-red-navy-dress/detail.jpg"
+      ]
+    },
+    {
+      id: "girls-purple-floral-dress",
+      name: "فستان بنفسجي بنقشة زهور",
+      category: "clothes",
+      description: "فستان بنفسجي بأكمام مكشكشة، مزين بفيونكة أمامية وشريط دانتيل ونقشة زهور بيضاء وبنفسجية.",
+      sizes: ["1", "2", "3", "4"],
+      price: null,
+      color: "#9b6bd1",
+      image: "assets/products/girls-purple-floral-dress/product.jpg",
+      mannequin: "assets/products/girls-purple-floral-dress/front.png",
+      gallery: [
+        "assets/products/girls-purple-floral-dress/back.png",
+        "assets/products/girls-purple-floral-dress/detail.jpg"
+      ]
+    },
+    {
+      id: "girls-denim-yellow-dress",
+      name: "فستان جينز بكشكش أصفر",
+      category: "clothes",
+      description: "فستان جينز بدون أكمام، مزين بشريط زهور بيضاء وصفراء وتنورة بكشكش كاروهات أصفر.",
+      sizes: ["1", "2", "3", "4"],
+      price: null,
+      color: "#87a8c5",
+      image: "assets/products/girls-denim-yellow-dress/product.jpg",
+      mannequin: "assets/products/girls-denim-yellow-dress/mannequin.jpg",
+      gallery: ["assets/products/girls-denim-yellow-dress/detail.jpg"]
     }
   ]
 };
