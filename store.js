@@ -37,20 +37,36 @@ window.MINI_BABY = {
       color: "#dedbd2",
       colorName: "سكني",
       colors: [
-        { name: "أحمر", hex: "#671a2e", photos: ["assets/products/winter-wool-set-colors.jpg", "assets/products/winter-wool-set-red.jpg"] },
+        {
+          name: "أحمر",
+          hex: "#671a2e",
+          mannequin: "assets/products/winter-wool-set-mannequin-red.jpg",
+          photos: ["assets/products/winter-wool-set-mannequin-red.jpg", "assets/products/winter-wool-set-red.jpg"]
+        },
         {
           name: "سكني",
           hex: "#b9bcbc",
+          mannequin: "assets/products/winter-wool-set-mannequin-grey.jpg",
           photos: [
-            "assets/products/winter-wool-set-colors.jpg",
+            "assets/products/winter-wool-set-mannequin-grey.jpg",
             "assets/products/winter-wool-set-grey-front.jpg",
             "assets/products/winter-wool-set-grey-back.jpg",
             "assets/products/winter-wool-set-knit-detail.jpg",
             "assets/products/winter-wool-set-cuff-detail.jpg"
           ]
         },
-        { name: "أسود", hex: "#353438", photos: ["assets/products/winter-wool-set-colors.jpg", "assets/products/winter-wool-set-black.jpg"] },
-        { name: "بيج", hex: "#d5bd98", photos: ["assets/products/winter-wool-set-colors.jpg"] }
+        {
+          name: "أسود",
+          hex: "#353438",
+          mannequin: "assets/products/winter-wool-set-mannequin-black.jpg",
+          photos: ["assets/products/winter-wool-set-mannequin-black.jpg", "assets/products/winter-wool-set-black.jpg"]
+        },
+        {
+          name: "بيج",
+          hex: "#d5bd98",
+          mannequin: "assets/products/winter-wool-set-mannequin-beige.jpg",
+          photos: ["assets/products/winter-wool-set-mannequin-beige.jpg"]
+        }
       ],
       outfit: "winter-knit-set",
       image: "assets/products/winter-wool-set-grey-front.jpg",

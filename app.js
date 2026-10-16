@@ -121,6 +121,7 @@
   // Transparent cut-outs (.png) sit inside the frame; regular photos fill it
   function photoClass(src) {
     if (/winter-wool-set-colors\.jpg$/i.test(src)) return "is-color-board";
+    if (/winter-wool-set-mannequin-/i.test(src)) return "is-mannequin";
     return /\.png$/i.test(src) ? "" : "is-photo";
   }
 
@@ -153,9 +154,7 @@
           title="${safeText(color.name)}" aria-label="اختيار اللون ${safeText(color.name)}"
           aria-pressed="${color.name === active.name}"></button>`).join("")}</div>
     </fieldset>
-    <p class="color-note">${active.photos?.length
-      ? `الصورة المرفقة تعرض الألوان الأربعة؛ اللون المحدد هو ${safeText(active.name)}.`
-      : `لا توجد صورة فعلية للون ${safeText(active.name)}؛ معاينته على المانيكان توضيحية.`}</p>`;
+    <p class="color-note">الصورة تعرض المانيكان منفردًا باللون ${safeText(active.name)}.</p>`;
   }
 
   function renderProducts() {
@@ -164,7 +163,7 @@
       const color = selectedColor(product);
       return `
       <article class="product-card ${selectedProductId === product.id ? "selected" : ""}" style="--product-color:${safeText(color.hex)}">
-        <button class="product-image ${product.image ? "" : "is-placeholder"}" type="button"
+        <button class="product-image ${color.mannequin ? "has-mannequin" : ""} ${product.image ? "" : "is-placeholder"}" type="button"
           data-try="${safeText(product.id)}" aria-label="عرض صور ${safeText(product.name)}">
           <span class="product-number">0${index + 1}</span>
           ${productImage(product)}
@@ -193,8 +192,13 @@
     if (!product) return;
     selectedProductId = productId;
     const color = selectedColor(product);
-    document.querySelector("#doll-hint").textContent = `الصورة تعرض الألوان الأربعة؛ اخترتِ ${color.name}.`;
-    document.querySelector("#doll-stage").setAttribute("aria-label", `صورة الطقم على المانيكان بالألوان الأربعة، اللون المحدد ${color.name}`);
+    const mannequinImage = color.mannequin || color.photos?.[0] || product.image;
+    const dollStage = document.querySelector("#doll-stage");
+    const stageImage = dollStage.querySelector("img");
+    document.querySelector("#doll-hint").textContent = `المانيكان باللون ${color.name}.`;
+    stageImage.src = mannequinImage;
+    stageImage.alt = `طقم البيبي الصوفي على مانيكان منفرد باللون ${color.name}`;
+    dollStage.setAttribute("aria-label", `المانيكان مرتدٍ الطقم باللون ${color.name}`);
     renderProducts();
   }
 
