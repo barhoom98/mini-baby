@@ -164,7 +164,7 @@
       const color = selectedColor(product);
       return `
       <article class="product-card ${selectedProductId === product.id ? "selected" : ""}" style="--product-color:${safeText(color.hex)}">
-        <button class="product-image ${color.mannequin ? "has-mannequin" : ""} ${product.image ? "" : "is-placeholder"}" type="button"
+        <button class="product-image ${product.image ? "" : "is-placeholder"}" type="button"
           data-try="${safeText(product.id)}" aria-label="عرض صور ${safeText(product.name)}">
           <span class="product-number">0${index + 1}</span>
           ${productImage(product)}
