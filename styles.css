@@ -259,3 +259,25 @@ h1 span { color: var(--rose); }
   .announcement span, .cart-button > span, .hero-sticker span, .placeholder-icon, .cart-empty > span, .hero-note span, .sparkle, .service-strip > div > span { animation: none; }
   .category-chip:hover, .add-button:hover { transform: none; }
 }
+
+/* Hover pop: icons spring out with a ring burst when the mouse reaches them or the control they sit in */
+.announcement span, .cart-button > span, .hero-sticker span, .placeholder-icon, .cart-empty > span, .service-strip > div > span,
+.hero-note span, .sparkle, .add-button span, .primary-button span, .search-box span, .icon-button { position: relative; }
+.announcement span::after, .cart-button > span::after, .hero-sticker span::after, .placeholder-icon::after, .cart-empty > span::after,
+.service-strip > div > span::after, .hero-note span::after, .sparkle::after { content: ""; position: absolute; inset: -6px; border: 2px solid var(--rose); border-radius: 50%; opacity: 0; pointer-events: none; }
+.announcement:hover span, .cart-button:hover > span, .hero-sticker:hover span, .placeholder-icon:hover, .cart-empty:hover > span,
+.service-strip > div:hover > span { animation: icon-pop .7s cubic-bezier(.34, 1.56, .64, 1) both; }
+.hero-note:hover span, .doll-heading:hover .sparkle, .sparkle:hover, .service-strip > div:nth-child(2):hover > span { animation: icon-spin-pop .8s cubic-bezier(.34, 1.56, .64, 1) both; }
+.announcement:hover span::after, .cart-button:hover > span::after, .hero-sticker:hover span::after, .placeholder-icon:hover::after, .cart-empty:hover > span::after,
+.service-strip > div:hover > span::after, .hero-note:hover span::after, .doll-heading:hover .sparkle::after, .sparkle:hover::after { animation: icon-ring .8s ease-out both; }
+.add-button span, .primary-button span, .icon-button { transition: transform .3s cubic-bezier(.34, 1.56, .64, 1); }
+.add-button:hover span { transform: rotate(90deg) scale(1.5); }
+.primary-button:hover span { transform: translateX(-6px) scale(1.3); }
+.icon-button:hover { transform: rotate(90deg) scale(1.2); }
+@keyframes icon-pop { 0% { transform: scale(1) rotate(0); } 35% { transform: scale(1.8) rotate(-14deg); } 60% { transform: scale(1.3) rotate(10deg); } 100% { transform: scale(1.5) rotate(0); } }
+@keyframes icon-spin-pop { 0% { transform: scale(1) rotate(0); } 100% { transform: scale(1.6) rotate(360deg); } }
+@keyframes icon-ring { 0% { transform: scale(.6); opacity: .8; } 100% { transform: scale(2.2); opacity: 0; } }
+@media (prefers-reduced-motion: reduce) {
+  .announcement:hover span, .cart-button:hover > span, .hero-sticker:hover span, .placeholder-icon:hover, .cart-empty:hover > span, .service-strip > div:hover > span,
+  .hero-note:hover span, .doll-heading:hover .sparkle, .sparkle:hover, .add-button:hover span, .primary-button:hover span, .icon-button:hover, [class]:hover::after { animation: none; transform: none; }
+}
