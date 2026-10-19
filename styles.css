@@ -281,3 +281,23 @@ h1 span { color: var(--rose); }
   .announcement:hover span, .cart-button:hover > span, .hero-sticker:hover span, .placeholder-icon:hover, .cart-empty:hover > span, .service-strip > div:hover > span,
   .hero-note:hover span, .doll-heading:hover .sparkle, .sparkle:hover, .add-button:hover span, .primary-button:hover span, .icon-button:hover, [class]:hover::after { animation: none; transform: none; }
 }
+
+/* Product cards: springy pop on hover */
+.product-card { transition: border-color .2s, box-shadow .2s, transform .35s cubic-bezier(.34, 1.56, .64, 1); }
+.product-card:hover { transform: translateY(-6px) scale(1.02); border-color: var(--rose); box-shadow: 0 14px 30px rgba(43, 42, 64, .18); }
+.product-image img { transition: transform .5s cubic-bezier(.34, 1.56, .64, 1); }
+.product-image:hover img { transform: scale(1.1) rotate(-1.5deg); }
+.product-number { transition: transform .4s cubic-bezier(.34, 1.56, .64, 1), background .2s, color .2s; padding: 2px 6px; border-radius: 30px; }
+.product-card:hover .product-number { transform: scale(1.5); background: var(--rose); color: #fff; }
+.try-label { transition: opacity .2s, transform .45s cubic-bezier(.34, 1.56, .64, 1); }
+.product-image:hover .try-label { transform: translate(-50%, -4px) scale(1.12); }
+.product-thumbs button { transition: transform .35s cubic-bezier(.34, 1.56, .64, 1), border-color .2s; }
+.product-thumbs button:hover { transform: translateY(-4px) scale(1.25) rotate(-3deg); border-color: var(--rose); }
+.color-swatch { position: relative; transition: transform .35s cubic-bezier(.34, 1.56, .64, 1), box-shadow .2s; }
+.color-swatch:hover { transform: scale(1.5); }
+.color-swatch::after { content: ""; position: absolute; inset: -5px; border: 2px solid var(--swatch-color); border-radius: 50%; opacity: 0; pointer-events: none; }
+.color-swatch:hover::after { animation: icon-ring .7s ease-out both; }
+@media (prefers-reduced-motion: reduce) {
+  .product-card:hover, .product-image:hover img, .product-card:hover .product-number, .product-image:hover .try-label, .product-thumbs button:hover, .color-swatch:hover { transform: none; }
+  .color-swatch:hover::after { animation: none; }
+}
