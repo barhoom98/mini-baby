@@ -301,3 +301,18 @@ h1 span { color: var(--rose); }
   .product-card:hover, .product-image:hover img, .product-card:hover .product-number, .product-image:hover .try-label, .product-thumbs button:hover, .color-swatch:hover { transform: none; }
   .color-swatch:hover::after { animation: none; }
 }
+
+/* Logo: the letters come apart slightly and pop outward on hover, like an exploded view */
+.logo-mech { position: relative; display: inline-block; flex: none; height: 88px; aspect-ratio: 480 / 287; }
+.footer-brand .logo-mech { height: 60px; }
+.logo-mech img { position: absolute; inset: 0; width: 100%; height: 100%; padding: 0; transition: transform .5s cubic-bezier(.2, 1.5, .4, 1), filter .3s; transition-delay: var(--d, 0s); }
+.lm-b1 { transform-origin: 13% 52%; --d: 0s; --x: -5%; --y: 3%; --r: -4deg; }
+.lm-mini { transform-origin: 48% 18%; --d: .04s; --x: -3%; --y: -9%; --r: -4deg; }
+.lm-dot { transform-origin: 43% 5%; --d: .08s; --x: 5%; --y: -11%; --r: 25deg; }
+.lm-a { transform-origin: 37% 57%; --d: .05s; --x: -1%; --y: 8%; --r: 3deg; }
+.lm-b2 { transform-origin: 62% 50%; --d: .09s; --x: 2%; --y: -7%; --r: -3deg; }
+.lm-y { transform-origin: 86% 64%; --d: .02s; --x: 6%; --y: 5%; --r: 4deg; }
+.brand:hover .logo-mech img, .brand:focus-visible .logo-mech img, .footer-brand:hover .logo-mech img, .footer-brand:focus-visible .logo-mech img {
+  transform: translate(var(--x), var(--y)) rotate(var(--r)) scale(1.07); filter: drop-shadow(0 3px 2px rgba(43, 42, 64, .3)); }
+@media (max-width: 680px) { .brand .logo-mech { height: 66px; } }
+@media (prefers-reduced-motion: reduce) { .logo-mech img { transition: none; } .brand:hover .logo-mech img, .brand:focus-visible .logo-mech img, .footer-brand:hover .logo-mech img, .footer-brand:focus-visible .logo-mech img { transform: none; filter: none; } }
