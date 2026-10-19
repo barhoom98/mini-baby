@@ -244,3 +244,18 @@ h1 span { color: var(--rose); }
   .search-box { width: 100%; }
   .product-grid { grid-template-columns: 1fr; }
 }
+
+/* Animated icons: gentle float, slow spin and hover lift */
+.announcement span, .cart-button > span, .hero-sticker span, .placeholder-icon, .cart-empty > span,
+.service-strip > div:nth-child(1) > span, .service-strip > div:nth-child(3) > span { display: inline-grid; --lift: -4px; animation: icon-bounce 2.6s cubic-bezier(.5, 0, .5, 1) infinite; }
+.hero-sticker span { display: inline-block; }
+.placeholder-icon, .cart-empty > span { --lift: -10px; }
+.hero-note span, .sparkle, .service-strip > div:nth-child(2) > span { display: inline-grid; animation: icon-spin 10s linear infinite; }
+.category-chip, .add-button { transition: .2s; }
+.category-chip:hover, .add-button:hover { transform: translateY(-3px); }
+@keyframes icon-bounce { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(var(--lift, -4px)); } }
+@keyframes icon-spin { to { transform: rotate(360deg); } }
+@media (prefers-reduced-motion: reduce) {
+  .announcement span, .cart-button > span, .hero-sticker span, .placeholder-icon, .cart-empty > span, .hero-note span, .sparkle, .service-strip > div > span { animation: none; }
+  .category-chip:hover, .add-button:hover { transform: none; }
+}
