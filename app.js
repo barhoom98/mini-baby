@@ -122,7 +122,7 @@
   function photoClass(src) {
     if (/winter-wool-set-colors\.jpg$/i.test(src)) return "is-color-board";
     if (/\/girls-[^/]+\/product\.jpg$/i.test(src)) return "is-product-photo";
-    if (/winter-wool-set-mannequin-|\/(?:front|back|mannequin)\.(?:jpg|png)$/i.test(src)) return "is-mannequin";
+    if (/winter-wool-set-mannequin-|\/preview\/|\/(?:front|back|mannequin)\.(?:jpg|png)$/i.test(src)) return "is-mannequin";
     return /\.png$/i.test(src) ? "" : "is-photo";
   }
 
