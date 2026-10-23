@@ -316,3 +316,9 @@ h1 span { color: var(--rose); }
   transform: translate(var(--x), var(--y)) rotate(var(--r)) scale(1.07); filter: drop-shadow(0 3px 2px rgba(43, 42, 64, .3)); }
 @media (max-width: 680px) { .brand .logo-mech { height: 66px; } }
 @media (prefers-reduced-motion: reduce) { .logo-mech img { transition: none; } .brand:hover .logo-mech img, .brand:focus-visible .logo-mech img, .footer-brand:hover .logo-mech img, .footer-brand:focus-visible .logo-mech img { transform: none; filter: none; } }
+
+/* Site background: the shop photo, softened so text stays readable */
+body { position: relative; isolation: isolate; }
+body::before, body::after { content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none; }
+body::before { background: url("assets/store-background.webp") center / cover no-repeat; filter: blur(2px); transform: scale(1.04); }
+body::after { background: linear-gradient(rgba(255, 255, 255, .8), rgba(255, 255, 255, .86)); }
