@@ -40,13 +40,13 @@ window.MINI_BABY = {
         {
           name: "أحمر",
           hex: "#671a2e",
-          mannequin: "assets/products/winter-wool-set-mannequin-red.jpg",
+          mannequin: "assets/products/preview/wool-red.jpg",
           photos: ["assets/products/winter-wool-set-red.jpg"]
         },
         {
           name: "سكني",
           hex: "#b9bcbc",
-          mannequin: "assets/products/winter-wool-set-mannequin-grey.jpg",
+          mannequin: "assets/products/preview/wool-grey.jpg",
           photos: [
             "assets/products/winter-wool-set-grey-front.jpg",
             "assets/products/winter-wool-set-grey-back.jpg",
@@ -57,13 +57,13 @@ window.MINI_BABY = {
         {
           name: "أسود",
           hex: "#353438",
-          mannequin: "assets/products/winter-wool-set-mannequin-black.jpg",
+          mannequin: "assets/products/preview/wool-black.jpg",
           photos: ["assets/products/winter-wool-set-black.jpg"]
         },
         {
           name: "بيج",
           hex: "#d5bd98",
-          mannequin: "assets/products/winter-wool-set-mannequin-beige.jpg",
+          mannequin: "assets/products/preview/wool-beige.jpg",
           photos: []
         }
       ],
@@ -80,7 +80,7 @@ window.MINI_BABY = {
       price: 10,
       color: "#a51932",
       image: "assets/products/girls-red-rose-dress/product.jpg",
-      mannequin: "assets/products/girls-red-rose-dress/front.jpg",
+      mannequin: "assets/products/preview/red-rose-dress.jpg",
       gallery: ["assets/products/girls-red-rose-dress/detail.jpg"]
     },
     {
@@ -92,7 +92,7 @@ window.MINI_BABY = {
       price: 10,
       color: "#e1bd39",
       image: "assets/products/girls-yellow-navy-dress/product.jpg",
-      mannequin: "assets/products/girls-yellow-navy-dress/front.png",
+      mannequin: "assets/products/preview/yellow-navy-dress.jpg",
       gallery: ["assets/products/girls-yellow-navy-dress/detail.jpg"]
     },
     {
@@ -104,7 +104,7 @@ window.MINI_BABY = {
       price: 10,
       color: "#8e2139",
       image: "assets/products/girls-red-navy-dress/product.jpg",
-      mannequin: "assets/products/girls-red-navy-dress/front.jpg",
+      mannequin: "assets/products/preview/red-navy-dress.jpg",
       gallery: ["assets/products/girls-red-navy-dress/detail.jpg"]
     },
     {
@@ -116,7 +116,7 @@ window.MINI_BABY = {
       price: 10,
       color: "#9b6bd1",
       image: "assets/products/girls-purple-floral-dress/product.jpg",
-      mannequin: "assets/products/girls-purple-floral-dress/front.png",
+      mannequin: "assets/products/preview/purple-floral-dress.jpg",
       gallery: ["assets/products/girls-purple-floral-dress/detail.jpg"]
     },
     {
@@ -128,7 +128,7 @@ window.MINI_BABY = {
       price: 10,
       color: "#87a8c5",
       image: "assets/products/girls-denim-yellow-dress/product.jpg",
-      mannequin: "assets/products/girls-denim-yellow-dress/mannequin.jpg",
+      mannequin: "assets/products/preview/denim-yellow-dress.jpg",
       gallery: ["assets/products/girls-denim-yellow-dress/detail.jpg"]
     }
   ]

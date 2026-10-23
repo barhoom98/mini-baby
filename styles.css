@@ -128,7 +128,7 @@ h1 span { color: var(--rose); }
 .doll-measurements b { color: var(--rose-dark); font: 700 12px var(--serif); }
 .doll-measurements small { color: var(--muted); font-size: 9px; }
 .doll-stage { max-width: 360px; margin-inline: auto; overflow: hidden; aspect-ratio: 3 / 4; border-radius: 6px; background: #f4f0e9; }
-.doll-stage img { display: block; width: 100%; height: 100%; object-fit: contain; }
+.doll-stage img { display: block; width: 100%; height: 100%; object-fit: cover; }
 .doll-panel.photo-mannequin { display: flex; flex-direction: column; gap: 8px; }
 .doll-panel.photo-mannequin .doll-hint { min-height: 0; }
 .try-on-label { padding-top: 13px; color: var(--muted); text-align: center; font-size: 10px; }
