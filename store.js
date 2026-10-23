@@ -64,7 +64,7 @@ window.MINI_BABY = {
           name: "بيج",
           hex: "#d5bd98",
           mannequin: "assets/products/preview/wool-beige.jpg",
-          photos: []
+          photos: ["assets/products/preview/wool-beige.jpg"]
         }
       ],
       outfit: "winter-knit-set",
