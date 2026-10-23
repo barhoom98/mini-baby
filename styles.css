@@ -322,3 +322,22 @@ body { position: relative; isolation: isolate; }
 body::before, body::after { content: ""; position: fixed; inset: 0; z-index: -1; pointer-events: none; }
 body::before { background: url("assets/store-background.webp") center / cover no-repeat; filter: blur(2px); transform: scale(1.04); }
 body::after { background: linear-gradient(rgba(255, 255, 255, .8), rgba(255, 255, 255, .86)); }
+
+/* Footer social icons: WhatsApp, Instagram, Facebook with a soft pulse and a springy hover */
+.social-links { gap: 14px; }
+.social { position: relative; display: grid; place-items: center; width: 46px; height: 46px; border-radius: 50%; color: #fff; box-shadow: 0 4px 12px rgba(43, 42, 64, .2);
+  transition: transform .35s cubic-bezier(.34, 1.56, .64, 1), box-shadow .2s; animation: social-float 3s ease-in-out infinite; }
+.social svg { position: relative; width: 24px; height: 24px; }
+.social::before { content: ""; position: absolute; inset: 0; border-radius: 50%; background: inherit; z-index: -1; animation: social-ping 2.4s ease-out infinite; }
+.social-wa { background: #25d366; }
+.social-ig { background: radial-gradient(circle at 30% 107%, #fdf497 0, #fdf497 5%, #fd5949 45%, #d6249f 60%, #285aeb 90%); animation-delay: .3s; }
+.social-fb { background: #1877f2; animation-delay: .6s; }
+.social-ig::before { animation-delay: .3s; }
+.social-fb::before { animation-delay: .6s; }
+.social-wa svg { animation: social-shake 3s ease-in-out infinite; transform-origin: 50% 60%; }
+.social:hover { animation: none; transform: translateY(-6px) scale(1.25) rotate(-8deg); box-shadow: 0 10px 20px rgba(43, 42, 64, .3); text-decoration: none; }
+.social:focus-visible { outline: 3px solid var(--ink); outline-offset: 3px; }
+@keyframes social-float { 0%, 100% { transform: translateY(0); } 50% { transform: translateY(-4px); } }
+@keyframes social-ping { 0% { transform: scale(1); opacity: .55; } 70%, 100% { transform: scale(1.7); opacity: 0; } }
+@keyframes social-shake { 0%, 60%, 100% { transform: rotate(0); } 66% { transform: rotate(-16deg); } 72% { transform: rotate(14deg); } 78% { transform: rotate(-10deg); } 84% { transform: rotate(8deg); } 90% { transform: rotate(0); } }
+@media (prefers-reduced-motion: reduce) { .social, .social::before, .social-wa svg { animation: none; } .social:hover { transform: none; } }
