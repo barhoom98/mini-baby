@@ -6,3 +6,4 @@
 - Replace the demo catalog and demo prices before publishing. Do not invent real stock, material, delivery, or payment claims.
 - The cart is stored in the visitor's browser and checkout sends the order summary to the configured WhatsApp number. No online payment or central order database is included.
 - The mannequin image is a static product photo, not a 3D model or a size-accurate fitting tool.
+- Side-preview mannequin photos are 3:4 crops in `assets/products/preview/` so the mannequin fills the whole frame; point each product's/colour's `mannequin` at one of these and keep the 3:4 ratio for new ones.
